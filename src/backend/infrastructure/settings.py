@@ -21,7 +21,7 @@ class DatabaseSettings(BaseSettings):
     port: int = 5432
     database: str
 
-    driver: str = "psycopg"
+    driver: str = "asyncpg"
     database_system: str = "postgresql"
 
     def build_connection_uri(self) -> str:
