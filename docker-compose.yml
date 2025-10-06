@@ -1,0 +1,57 @@
+services:
+  database:
+    image: postgres:latest
+    restart: unless-stopped
+
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=depute-app
+      - PGDATA=/data/postgres
+
+    volumes:
+      - postgres:/data/postgres
+
+    ports:
+      - 5432:5432
+
+  centrifugal:
+    image: centrifugo/centrifugo:v6
+    volumes:
+      - ./config.json:/centrifugo/config.json
+
+    command: centrifugo -c config.json
+
+    ports:
+      - 8000:8000
+
+  redis:
+    image: redis:latest
+    restart: unless-stopped
+
+    ports:
+      - 6379:6379
+
+  rabbit:
+    image: rabbitmq:latest
+    restart: unless-stopped
+
+    ports:
+      - 5672:5672
+
+  nats:
+    image: nats:latest
+    restart: unless-stopped
+
+    ports:
+      - 4222:4222
+      - 8222:8222
+
+    volumes:
+      - nats:/data
+
+    command: ["-js", "-sd=/data", "-m=8222", "--auth=22222222222"]
+
+volumes:
+  postgres:
+  nats:
