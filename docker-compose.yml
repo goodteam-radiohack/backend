@@ -36,6 +36,18 @@ services:
       redis:
         condition: service_healthy
 
+  migrations:
+    image: urfu-entrants:latest
+    restart: no
+
+    command: python -m alembic upgrade head
+
+    environment: *shared-env
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
   postgres:
     image: postgres:17.1-alpine
     hostname: postgres
