@@ -37,6 +37,18 @@ class RsvpGateway(RsvpReader, RsvpWriter):
 
         return [result.to_entity() for result in results]
 
+    async def with_user_and_event(self, user_id: int, event_id: int) -> RSVPEntity:
+        stmt = select(RSVPModel).where(
+            RSVPModel.event_id == event_id, RSVPModel.user_id == user_id
+        )
+
+        try:
+            result = (await self.session.scalars(stmt)).one()
+        except NoResultFound as exc:
+            raise RsvpNotFoundError from exc
+
+        return result.to_entity()
+
     async def create(self, dto: CreateRsvpDTO) -> RSVPEntity:
         stmt = insert(RSVPModel).values(**dto.model_dump()).returning(RSVPModel.id)
 
