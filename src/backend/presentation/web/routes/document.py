@@ -8,10 +8,15 @@ from backend.application.contracts.documents.create import (
     CreateDocumentRequest,
     CreateDocumentResponse,
 )
+from backend.application.contracts.documents.delete import (
+    DeleteDocumentRequest,
+    DeleteDocumentResponse,
+)
 from backend.application.contracts.documents.document import DocumentResponse
 from backend.application.contracts.documents.get import GetDocumentRequest
 from backend.application.contracts.documents.upload import UploadDocumentRequest
 from backend.application.usecases.documents.create import CreateDocumentUseCase
+from backend.application.usecases.documents.delete import DeleteDocumentUseCase
 from backend.application.usecases.documents.get import GetDocumentUseCase
 from backend.application.usecases.documents.upload import UploadDocumentUseCase
 
@@ -23,6 +28,13 @@ async def get_document_by_id(
     document_id: int, interactor: FromDishka[GetDocumentUseCase]
 ) -> DocumentResponse:
     return await interactor(GetDocumentRequest(id=document_id))
+
+
+@router.delete("/{document_id}")
+async def delete_document(
+    document_id: int, interactor: FromDishka[DeleteDocumentUseCase]
+) -> DeleteDocumentResponse:
+    return await interactor(DeleteDocumentRequest(id=document_id))
 
 
 @router.post("")

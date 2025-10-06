@@ -27,3 +27,6 @@ class S3Service:
                 ExpiresIn=int(expires_in.total_seconds()),
             )
         )
+
+    async def delete(self, key: str) -> None:
+        await self.bucket.delete_object(Bucket=self.settings.s3.bucket, Key=key)
