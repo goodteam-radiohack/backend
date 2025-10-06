@@ -3,7 +3,7 @@ from typing import Literal
 
 from pydantic import BaseModel
 
-from backend.domain.entities.event import EventEntity
+from backend.application.contracts.events.event import EventResponse
 
 
 class GetEventsRequest(BaseModel):
@@ -12,4 +12,4 @@ class GetEventsRequest(BaseModel):
 
 
 class GetEventsResponse(BaseModel):
-    items: dict[date, list[EventEntity]]
+    items: dict[date, list[EventResponse]]
