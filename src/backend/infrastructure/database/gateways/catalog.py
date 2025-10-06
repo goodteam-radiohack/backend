@@ -1,9 +1,10 @@
 from dataclasses import dataclass
+from typing import Any
 
 from sqlalchemy import insert, select, update
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
+from sqlalchemy.orm import selectinload, with_loader_criteria
 
 from backend.application.gateways.catalog import (
     CatalogReader,
@@ -12,6 +13,7 @@ from backend.application.gateways.catalog import (
 )
 from backend.domain.dto.catalog import CreateCatalogDTO, UpdateCatalogDTO
 from backend.domain.entities.catalog import CatalogEntity
+from backend.domain.enum.document import DocumentVisibility
 from backend.infrastructure.database.models.catalog import CatalogModel
 from backend.infrastructure.database.models.document import DocumentModel
 from backend.infrastructure.errors.gateways.catalog import CatalogNotFoundError
@@ -21,14 +23,32 @@ _OPTIONS = [
     selectinload(CatalogModel.documents).joinedload(DocumentModel.created_by),
 ]
 
+# shared queries
+
 
 @dataclass
 class CatalogGateway(CatalogReader, CatalogWriter, CatalogUpdater):
     session: AsyncSession
 
-    async def with_id(self, catalog_id: int) -> CatalogEntity:
+    @staticmethod
+    def _doc_visible(user_id: int | None = None) -> Any:
+        return (DocumentModel.visibility == DocumentVisibility.PUBLIC) | (
+            (DocumentModel.visibility == DocumentVisibility.PRIVATE)
+            & (DocumentModel.created_by_id == user_id)
+        )
+
+    async def with_id(
+        self, catalog_id: int, user_id: int | None = None
+    ) -> CatalogEntity:
         stmt = (
-            select(CatalogModel).where(CatalogModel.id == catalog_id).options(*_OPTIONS)
+            select(CatalogModel)
+            .where(CatalogModel.id == catalog_id)
+            .options(
+                *_OPTIONS,
+                with_loader_criteria(
+                    DocumentModel, self._doc_visible(user_id), include_aliases=True
+                ),
+            )
         )
 
         try:
@@ -38,11 +58,16 @@ class CatalogGateway(CatalogReader, CatalogWriter, CatalogUpdater):
 
         return result.to_entity()
 
-    async def get_root(self) -> list[CatalogEntity]:
+    async def get_root(self, user_id: int | None = None) -> list[CatalogEntity]:
         stmt = (
             select(CatalogModel)
             .where(CatalogModel.parent_id.is_(None))
-            .options(*_OPTIONS)
+            .options(
+                *_OPTIONS,
+                with_loader_criteria(
+                    DocumentModel, self._doc_visible(user_id), include_aliases=True
+                ),
+            )
         )
 
         results = (await self.session.scalars(stmt)).all()

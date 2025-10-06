@@ -2,6 +2,7 @@ from pydantic import BaseModel
 
 from backend.application.contracts.users.user import UserResponse
 from backend.domain.entities.document import DocumentEntity
+from backend.domain.enum.document import DocumentVisibility
 
 
 class DocumentResponse(BaseModel):
@@ -16,6 +17,7 @@ class DocumentResponse(BaseModel):
     url: str
 
     created_by: UserResponse
+    visibility: DocumentVisibility
 
     @classmethod
     def from_entity(cls, entity: DocumentEntity) -> "DocumentResponse":
@@ -27,4 +29,5 @@ class DocumentResponse(BaseModel):
             size=entity.size,
             url="https://google.com",  # TODO: change to pre-signed S3
             created_by=UserResponse.from_entity(entity.created_by),
+            visibility=entity.visibility,
         )

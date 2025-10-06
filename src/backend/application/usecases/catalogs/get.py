@@ -14,7 +14,7 @@ class GetCatalogUseCase(Interactor[GetCatalogRequest, CatalogResponse]):
     catalog_reader: CatalogReader
 
     async def __call__(self, data: GetCatalogRequest) -> CatalogResponse:
-        await self.id_provider.get_user()
+        user = await self.id_provider.get_user()
 
-        catalog = await self.catalog_reader.with_id(data.id)
+        catalog = await self.catalog_reader.with_id(data.id, user.id)
         return CatalogResponse.from_entity(catalog)

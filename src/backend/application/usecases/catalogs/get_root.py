@@ -19,10 +19,9 @@ class GetRootCatalogsUseCase(
     catalog_reader: CatalogReader
 
     async def __call__(self, _: GetRootCatalogsRequest) -> GetRootCatalogsResponse:
-        # NOTE: just authenticate
-        await self.id_provider.get_user()
+        user = await self.id_provider.get_user()
 
-        root_catalogs = await self.catalog_reader.get_root()
+        root_catalogs = await self.catalog_reader.get_root(user.id)
         return GetRootCatalogsResponse(
             catalogs=[CatalogResponse.from_entity(catalog) for catalog in root_catalogs]
         )

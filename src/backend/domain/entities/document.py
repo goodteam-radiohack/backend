@@ -1,5 +1,6 @@
 from backend.domain.entities.base import BaseEntity
 from backend.domain.entities.user import UserEntity
+from backend.domain.enum.document import DocumentVisibility
 
 
 class DocumentEntity(BaseEntity):
@@ -16,6 +17,8 @@ class DocumentEntity(BaseEntity):
 
     created_by_id: int
     created_by: UserEntity
+
+    visibility: DocumentVisibility
 
     def is_author(self, user: UserEntity) -> bool:
         return user.id == self.created_by.id
