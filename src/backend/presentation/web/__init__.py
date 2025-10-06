@@ -7,6 +7,7 @@ from fastapi import FastAPI
 
 from backend.infrastructure.ioc import get_container
 from backend.presentation.web.routes import setup_routes
+from backend.presentation.web.routes.errors import setup_errors_handler
 
 
 @asynccontextmanager
@@ -25,5 +26,6 @@ def create_app() -> FastAPI:
     setup_dishka(container, app)
 
     setup_routes(app)
+    setup_errors_handler(app)
 
     return app
