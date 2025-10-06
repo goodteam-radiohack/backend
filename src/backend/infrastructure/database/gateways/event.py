@@ -28,7 +28,7 @@ class EventGateway(EventReader, EventWriter, EventUpdater):
 
     async def all_window(self, start: datetime, end: datetime) -> list[EventEntity]:
         stmt = select(EventModel).where(
-            EventModel.scheduled_at >= start, EventModel.scheduled_at <= end
+            EventModel.scheduled_at >= start, EventModel.scheduled_at < end
         )
 
         results = (await self.session.scalars(stmt)).all()
