@@ -6,8 +6,10 @@ from pytz import timezone
 
 from backend.application.common.id_provider import IdProvider
 from backend.application.common.interactor import Interactor
+from backend.application.contracts.events.event import EventResponse
 from backend.application.contracts.events.get import GetEventsRequest, GetEventsResponse
 from backend.application.gateways.event import EventReader
+from backend.application.gateways.rsvp import RsvpReader
 
 TZ = timezone("Asia/Yekaterinburg")
 
@@ -16,6 +18,7 @@ TZ = timezone("Asia/Yekaterinburg")
 class GetEventsUseCase(Interactor[GetEventsRequest, GetEventsResponse]):
     id_provider: IdProvider
 
+    rsvp_reader: RsvpReader
     event_reader: EventReader
 
     def _week_range(self, offset: int) -> tuple[datetime, datetime]:
@@ -30,7 +33,7 @@ class GetEventsUseCase(Interactor[GetEventsRequest, GetEventsResponse]):
         return start, end_exclusive
 
     async def __call__(self, data: GetEventsRequest) -> GetEventsResponse:
-        await self.id_provider.get_user()
+        user = await self.id_provider.get_user()
 
         # TODO: add depute status at every event
 
@@ -39,7 +42,17 @@ class GetEventsUseCase(Interactor[GetEventsRequest, GetEventsResponse]):
         events = await self.event_reader.all_window(start, end)
         grouped_events = defaultdict(list)
 
+        # TODO: это можно оптимизировать немного)
+        items: list[EventResponse] = []
+        rsvps = await self.rsvp_reader.with_user_and_events(
+            user.id, {event.id for event in events}
+        )
+
         for event in events:
-            grouped_events[event.scheduled_at.astimezone(tz=TZ).date()].append(event)
+            rsvp = next(filter(lambda x: x.event_id == event.id, rsvps), None)
+            items.append(EventResponse.from_entity(event, rsvp))
+
+        for item in items:
+            grouped_events[item.scheduled_at.astimezone(tz=TZ).date()].append(item)
 
         return GetEventsResponse(items=grouped_events)

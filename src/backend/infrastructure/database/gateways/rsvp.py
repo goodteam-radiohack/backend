@@ -1,3 +1,4 @@
+from collections.abc import Iterable
 from dataclasses import dataclass
 
 from sqlalchemy import delete, insert, select
@@ -24,6 +25,17 @@ class RsvpGateway(RsvpReader, RsvpWriter):
             raise RsvpNotFoundError from exc
 
         return result.to_entity()
+
+    async def with_user_and_events(
+        self, user_id: int, event_ids: Iterable[int]
+    ) -> list[RSVPEntity]:
+        stmt = select(RSVPModel).where(
+            RSVPModel.user_id == user_id, RSVPModel.event_id.in_(event_ids)
+        )
+
+        results = (await self.session.scalars(stmt)).all()
+
+        return [result.to_entity() for result in results]
 
     async def create(self, dto: CreateRsvpDTO) -> RSVPEntity:
         stmt = insert(RSVPModel).values(**dto.model_dump()).returning(RSVPModel.id)
