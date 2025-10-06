@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from backend.domain.entities.user import UserEntity
+from backend.application.contracts.users.user import UserResponse
 
 
 @dataclass
@@ -10,4 +10,4 @@ class GetMeRequest:
 
 @dataclass
 class GetMeResponse:
-    user: UserEntity
+    user: UserResponse
