@@ -18,6 +18,7 @@ dependencies = [
     "sqlalchemy>=2.0.43",
     "types-pytz>=2025.2.0.20250809",
     "uvicorn>=0.37.0",
+    "aiobcrypt (>=3.2.0.post1,<4.0.0)",
 ]
 
 [tool.ruff]

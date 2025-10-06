@@ -7,27 +7,27 @@ from pytz import timezone
 
 from backend.application.common.token_processor import TokenProcessor
 from backend.infrastructure.errors.auth import UnauthenticatedError
-from backend.infrastructure.settings import WebSettings
+from backend.infrastructure.settings import AppSettings
 
 ALGORITHM = "HS256"
 
 
 @dataclass
 class JWTProcessor(TokenProcessor):
-    web_settings: WebSettings
+    settings: AppSettings
 
     def create_token(self, session_uuid: UUID) -> str:
-        expires = datetime.now(tz=timezone("UTC")) + self.web_settings.jwt_expires_in
+        expires = datetime.now(tz=timezone("UTC")) + self.settings.web.jwt_expires_in
         payload = {"sub": str(session_uuid), "exp": expires}
 
         return jwt.encode(
-            payload, self.web_settings.jwt_secret.get_secret_value(), ALGORITHM
+            payload, self.settings.web.jwt_secret.get_secret_value(), ALGORITHM
         )
 
     def validate_token(self, token: str) -> UUID:
         try:
             payload = jwt.decode(
-                token, self.web_settings.jwt_secret.get_secret_value(), [ALGORITHM]
+                token, self.settings.web.jwt_secret.get_secret_value(), [ALGORITHM]
             )
         except jwt.InvalidTokenError as exc:
             raise UnauthenticatedError from exc
