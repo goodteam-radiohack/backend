@@ -2,11 +2,18 @@ from backend.domain.entities.base import BaseEntity
 from backend.domain.entities.document import DocumentEntity
 
 
-class CatalogEntity(BaseEntity):
+class OmittedCatalogEntity(BaseEntity):
     id: int
-    parent_id: int
+    parent_id: int | None
 
     name: str
 
-    child: list["CatalogEntity"]
+
+class CatalogEntity(BaseEntity):
+    id: int
+    parent_id: int | None
+
+    name: str
+
+    child: list[OmittedCatalogEntity]
     documents: list[DocumentEntity]

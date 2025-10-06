@@ -13,9 +13,13 @@ from backend.application.gateways.catalog import (
 from backend.domain.dto.catalog import CreateCatalogDTO, UpdateCatalogDTO
 from backend.domain.entities.catalog import CatalogEntity
 from backend.infrastructure.database.models.catalog import CatalogModel
+from backend.infrastructure.database.models.document import DocumentModel
 from backend.infrastructure.errors.gateways.catalog import CatalogNotFoundError
 
-_OPTIONS = [selectinload(CatalogModel.child), selectinload(CatalogModel.documents)]
+_OPTIONS = [
+    selectinload(CatalogModel.child),
+    selectinload(CatalogModel.documents).joinedload(DocumentModel.created_by),
+]
 
 
 @dataclass
