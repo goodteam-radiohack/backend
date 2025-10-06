@@ -22,7 +22,7 @@ uv run alembic upgrade head
 ## Generate migration
 
 ```shell
-uv run alembic revision --autogenerate -m \"<message here>\"
+uv run alembic revision --autogenerate -m "<message here>"
 ```
 
 ## Run application
@@ -30,13 +30,7 @@ uv run alembic revision --autogenerate -m \"<message here>\"
 Dev:
 
 ```shell
-uv run uvicorn --factory --host 127.0.0.1 --port 8080 --reload backend.presentation.web
-```
-
-Prod:
-
-```shell
-uv run uvicorn --factory --host 0.0.0.0 --port 8080 backend.presentation.web
+uv run uvicorn --factory --host 127.0.0.1 --port 8080 --reload backend.presentation.web:create_app
 ```
 
 ## Troubleshooting
