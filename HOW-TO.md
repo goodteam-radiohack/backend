@@ -30,7 +30,7 @@ uv run alembic revision --autogenerate -m "<message here>"
 Dev:
 
 ```shell
-uv run uvicorn --factory --host 127.0.0.1 --port 8080 --reload backend.presentation.web:create_app
+uv run uvicorn --factory --host 127.0.0.1 --port 8080 backend.presentation.web:create_app
 ```
 
 ## Troubleshooting
