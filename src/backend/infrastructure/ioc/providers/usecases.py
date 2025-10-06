@@ -3,8 +3,8 @@ from dishka import Provider, Scope, provide
 from backend.application.common.uow import UnitOfWork
 from backend.application.usecases.auth.logout import LogOutUseCase
 from backend.application.usecases.auth.signin import SignInUseCase
-from backend.application.usecases.users.me import MeUseCase
 from backend.application.usecases.events.get import GetEventsUseCase
+from backend.application.usecases.users.me import GetMeUseCase
 from backend.infrastructure.database.uow import UnitOfWorkImpl
 
 
@@ -16,7 +16,7 @@ class UsecasesProvider(Provider):
     logout = provide(LogOutUseCase)
 
     # users
-    me = provide(MeUseCase)
+    me = provide(GetMeUseCase)
 
     # events
     get_events = provide(GetEventsUseCase)
