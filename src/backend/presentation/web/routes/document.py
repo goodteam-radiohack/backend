@@ -2,7 +2,7 @@ from uuid import UUID
 
 from dishka import FromDishka
 from dishka.integrations.fastapi import DishkaRoute
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Depends, Request
 
 from backend.application.contracts.documents.create import (
     CreateDocumentRequest,
@@ -19,8 +19,14 @@ from backend.application.usecases.documents.create import CreateDocumentUseCase
 from backend.application.usecases.documents.delete import DeleteDocumentUseCase
 from backend.application.usecases.documents.get import GetDocumentUseCase
 from backend.application.usecases.documents.upload import UploadDocumentUseCase
+from backend.presentation.web.dependencies.authorization import authorization_header
 
-router = APIRouter(prefix="/documents", tags=["Documents"], route_class=DishkaRoute)
+router = APIRouter(
+    prefix="/documents",
+    tags=["Documents"],
+    route_class=DishkaRoute,
+    dependencies=[Depends(authorization_header)],
+)
 
 
 @router.get("/{document_id}")

@@ -2,7 +2,7 @@ from typing import Annotated, Literal
 
 from dishka import FromDishka
 from dishka.integrations.fastapi import DishkaRoute
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Depends, Query
 
 from backend.application.contracts.events.get import GetEventsRequest, GetEventsResponse
 from backend.application.contracts.rsvp.set_status import (
@@ -11,9 +11,15 @@ from backend.application.contracts.rsvp.set_status import (
 )
 from backend.application.usecases.events.get import GetEventsUseCase
 from backend.application.usecases.rsvp.set_status import SetRsvpStatusUseCase
+from backend.presentation.web.dependencies.authorization import authorization_header
 from backend.presentation.web.schemas.events import SetRsvpStatusSchema
 
-router = APIRouter(prefix="/events", tags=["Events"], route_class=DishkaRoute)
+router = APIRouter(
+    prefix="/events",
+    tags=["Events"],
+    route_class=DishkaRoute,
+    dependencies=[Depends(authorization_header)],
+)
 
 
 @router.get("")

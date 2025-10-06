@@ -1,6 +1,6 @@
 from dishka import FromDishka
 from dishka.integrations.fastapi import DishkaRoute
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
 from backend.application.contracts.catalogs.catalog import CatalogResponse
 from backend.application.contracts.catalogs.get import GetCatalogRequest
@@ -10,8 +10,14 @@ from backend.application.contracts.catalogs.get_root import (
 )
 from backend.application.usecases.catalogs.get import GetCatalogUseCase
 from backend.application.usecases.catalogs.get_root import GetRootCatalogsUseCase
+from backend.presentation.web.dependencies.authorization import authorization_header
 
-router = APIRouter(prefix="/catalogs", tags=["Catalogs"], route_class=DishkaRoute)
+router = APIRouter(
+    prefix="/catalogs",
+    tags=["Catalogs"],
+    route_class=DishkaRoute,
+    dependencies=[Depends(authorization_header)],
+)
 
 
 @router.get("")
