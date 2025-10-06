@@ -2,6 +2,7 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.dialects.postgresql import ENUM
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from backend.domain.entities.device import DeviceEntity
 from backend.domain.enum.device import Platform
 from backend.infrastructure.database.models.base import BaseModel
 from backend.infrastructure.database.models.user import UserModel
@@ -19,3 +20,6 @@ class DeviceModel(BaseModel):
     platform: Mapped[Platform] = mapped_column(ENUM(Platform, name="platforms"))
 
     # TODO: add `expires_at` field
+
+    def to_entity(self) -> DeviceEntity:
+        return DeviceEntity.model_validate(self)
