@@ -22,7 +22,7 @@ class CatalogModel(BaseModel):
     )
     parent: Mapped["CatalogModel"] = relationship(
         lambda: CatalogModel,
-        back_populates="children",
+        back_populates="child",
         remote_side=lambda: CatalogModel.id,
     )
 
