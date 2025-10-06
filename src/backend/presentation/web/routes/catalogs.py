@@ -3,11 +3,13 @@ from dishka.integrations.fastapi import DishkaRoute
 from fastapi import APIRouter
 
 from backend.application.contracts.catalogs.catalog import CatalogResponse
+from backend.application.contracts.catalogs.delete import DeleteCatalogRequest, DeleteCatalogResponse
 from backend.application.contracts.catalogs.get import GetCatalogRequest
 from backend.application.contracts.catalogs.get_root import (
     GetRootCatalogsRequest,
     GetRootCatalogsResponse,
 )
+from backend.application.usecases.catalogs.delete import DeleteCatalogUseCase
 from backend.application.usecases.catalogs.get import GetCatalogUseCase
 from backend.application.usecases.catalogs.get_root import GetRootCatalogsUseCase
 
@@ -26,3 +28,10 @@ async def get_catalog_by_id(
     catalog_id: int, interactor: FromDishka[GetCatalogUseCase]
 ) -> CatalogResponse:
     return await interactor(GetCatalogRequest(id=catalog_id))
+
+
+@router.delete("/{catalog_id}")
+async def delete_catalog(
+    catalog_id: int, interactor: FromDishka[DeleteCatalogUseCase]
+) -> DeleteCatalogResponse:
+    return await interactor(DeleteCatalogRequest(id=catalog_id))

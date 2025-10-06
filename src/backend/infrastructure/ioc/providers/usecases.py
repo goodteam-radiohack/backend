@@ -13,6 +13,7 @@ from backend.application.usecases.events.get import GetEventsUseCase
 from backend.application.usecases.rsvp.set_status import SetRsvpStatusUseCase
 from backend.application.usecases.users.me import GetMeUseCase
 from backend.infrastructure.database.uow import UnitOfWorkImpl
+from backend.application.usecases.catalogs.delete import DeleteCatalogUseCase
 
 
 class UsecasesProvider(Provider):
@@ -34,6 +35,7 @@ class UsecasesProvider(Provider):
     # catalogs
     get_root_catalogs = provide(GetRootCatalogsUseCase)
     get_catalog = provide(GetCatalogUseCase)
+    delete_catalog = provide(DeleteCatalogUseCase)
 
     # documents
     get_document = provide(GetDocumentUseCase)
