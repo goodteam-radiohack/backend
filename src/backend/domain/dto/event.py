@@ -12,6 +12,8 @@ class CreateEventDTO(BaseModel):
     image: str | None
 
     scheduled_at: datetime
+    ends_at: datetime
+
     status: EventStatus = EventStatus.SCHEDULED
 
 
@@ -24,4 +26,6 @@ class UpdateEventDTO(BaseModel):
     image: str | None = None
 
     scheduled_at: datetime | None = None
+    ends_at: datetime | None = None
+
     status: EventStatus | None = None

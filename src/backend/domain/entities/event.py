@@ -13,4 +13,6 @@ class EventEntity(BaseEntity):
     image: str | None
 
     scheduled_at: datetime
+    ends_at: datetime
+
     status: EventStatus

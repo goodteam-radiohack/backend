@@ -20,6 +20,7 @@ class EventModel(BaseModel):
     image: Mapped[str | None] = mapped_column(nullable=True)
 
     scheduled_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    ends_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
 
     status: Mapped[EventStatus] = mapped_column(
         ENUM(EventStatus, name="event_statutes"), server_default="SCHEDULED"
