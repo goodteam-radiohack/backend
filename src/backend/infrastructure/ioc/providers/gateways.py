@@ -1,9 +1,11 @@
 from dishka import AnyOf, Provider, Scope, provide
 
 from backend.application.gateways.device import DeviceReader, DeviceWriter
+from backend.application.gateways.event import EventReader, EventUpdater, EventWriter
 from backend.application.gateways.user import UserReader, UserUpdater, UserWriter
 from backend.infrastructure.cache.session import SessionGateway
 from backend.infrastructure.database.gateways.device import DeviceGateway
+from backend.infrastructure.database.gateways.event import EventGateway
 from backend.infrastructure.database.gateways.user import UserGateway
 
 
@@ -24,6 +26,15 @@ class GatewaysProvider(Provider):
         provides=AnyOf[
             DeviceReader,
             DeviceWriter,
+        ],
+    )
+
+    event_gateway = provide(
+        EventGateway,
+        provides=AnyOf[
+            EventReader,
+            EventWriter,
+            EventUpdater,
         ],
     )
 
