@@ -12,6 +12,18 @@ class WebSettings(BaseSettings):
     jwt_expires_in: timedelta = timedelta(days=30)
 
 
+class S3Settings(BaseSettings):
+    model_config = SettingsConfigDict(env_prefix="S3_", env_file=".env", extra="allow")
+
+    region: str | None = None
+
+    endpoint: str
+    bucket: str
+
+    access_key: SecretStr
+    secret_key: SecretStr
+
+
 class DatabaseSettings(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="DB_", env_file=".env", extra="allow")
 
@@ -67,10 +79,13 @@ class AppSettings:
     redis: RedisSettings
     web: WebSettings
 
+    s3: S3Settings
+
 
 def get_settings() -> AppSettings:
     return AppSettings(
         database=DatabaseSettings(),
         redis=RedisSettings(),
         web=WebSettings(),
+        s3=S3Settings(),
     )
