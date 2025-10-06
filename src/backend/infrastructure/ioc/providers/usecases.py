@@ -5,7 +5,9 @@ from backend.application.usecases.auth.logout import LogOutUseCase
 from backend.application.usecases.auth.signin import SignInUseCase
 from backend.application.usecases.catalogs.get import GetCatalogUseCase
 from backend.application.usecases.catalogs.get_root import GetRootCatalogsUseCase
+from backend.application.usecases.documents.create import CreateDocumentUseCase
 from backend.application.usecases.documents.get import GetDocumentUseCase
+from backend.application.usecases.documents.upload import UploadDocumentUseCase
 from backend.application.usecases.events.get import GetEventsUseCase
 from backend.application.usecases.rsvp.set_status import SetRsvpStatusUseCase
 from backend.application.usecases.users.me import GetMeUseCase
@@ -34,5 +36,7 @@ class UsecasesProvider(Provider):
 
     # documents
     get_document = provide(GetDocumentUseCase)
+    upload_document = provide(UploadDocumentUseCase)
+    create_document = provide(CreateDocumentUseCase)
 
     uow = provide(UnitOfWorkImpl, provides=UnitOfWork)

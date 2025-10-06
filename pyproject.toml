@@ -19,6 +19,8 @@ dependencies = [
     "uvicorn>=0.37.0",
     "aiobcrypt (>=3.2.0.post1,<4.0.0)",
     "asyncpg>=0.30.0",
+    "aioboto3>=15.2.0",
+    "python-magic>=0.4.27",
 ]
 
 [tool.ruff]

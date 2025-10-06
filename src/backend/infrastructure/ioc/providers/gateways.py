@@ -17,6 +17,7 @@ from backend.infrastructure.database.gateways.document import DocumentGateway
 from backend.infrastructure.database.gateways.event import EventGateway
 from backend.infrastructure.database.gateways.rsvp import RsvpGateway
 from backend.infrastructure.database.gateways.user import UserGateway
+from backend.infrastructure.errors.cache.ticket import DocumentTicketGateway
 
 
 class GatewaysProvider(Provider):
@@ -74,3 +75,4 @@ class GatewaysProvider(Provider):
     )
 
     session_gateway = provide(SessionGateway)
+    ticket_gateway = provide(DocumentTicketGateway)

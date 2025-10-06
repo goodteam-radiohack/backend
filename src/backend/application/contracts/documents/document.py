@@ -14,20 +14,22 @@ class DocumentResponse(BaseModel):
     mime: str
     size: int
 
-    url: str
+    url: str | None
 
     created_by: UserResponse
     visibility: DocumentVisibility
 
     @classmethod
-    def from_entity(cls, entity: DocumentEntity) -> "DocumentResponse":
+    def from_entity(
+        cls, entity: DocumentEntity, url: str | None = None
+    ) -> "DocumentResponse":
         return DocumentResponse(
             id=entity.id,
             catalog_id=entity.catalog_id,
             name=entity.name,
             mime=entity.mime,
             size=entity.size,
-            url="https://google.com",  # TODO: change to pre-signed S3
+            url=url,
             created_by=UserResponse.from_entity(entity.created_by),
             visibility=entity.visibility,
         )
