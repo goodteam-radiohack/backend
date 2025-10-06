@@ -17,4 +17,6 @@ class UsecasesProvider(Provider):
     # events
     get_events = provide(GetEventsUseCase)
 
+    # rsvp
+
     uow = provide(UnitOfWorkImpl, provides=UnitOfWork)
