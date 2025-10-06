@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime
 
-from sqlalchemy import insert, select, update
+from sqlalchemy import exists, insert, select, update
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -36,6 +36,10 @@ class EventGateway(EventReader, EventWriter, EventUpdater):
         results = (await self.session.scalars(stmt)).all()
 
         return [result.to_entity() for result in results]
+
+    async def exists(self, event_id: int) -> bool:
+        stmt = select(exists(EventModel).where(EventModel.id == event_id))
+        return (await self.session.scalars(stmt)).one()
 
     async def create(self, dto: CreateEventDTO) -> EventEntity:
         stmt = insert(EventModel).values(**dto.model_dump()).returning(EventModel.id)
