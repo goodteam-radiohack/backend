@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 
-from h11 import Data
 from pydantic import PostgresDsn, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
