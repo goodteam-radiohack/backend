@@ -57,8 +57,8 @@ services:
       - pg-data:/var/lib/postgresql/data
 
     environment:
-      POSTGRES_USER: payments
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-PaymentsDB}
+      POSTGRES_USER: depute
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-DeputeDB}
       POSTGRES_DB: data
 
     healthcheck:
