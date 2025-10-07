@@ -23,12 +23,20 @@ class DocumentTicketGateway:
         if all(item is None for item in data):
             raise ModelNotFoundError("Ticket not found")
 
+        data = [None if item == -1 else item for item in data]
+
         return TicketEntity(**dict(zip(fields, data, strict=True)))
 
     async def save(self, entity: TicketEntity) -> UUID:
         ticket = uuid4()
 
-        await self.redis.hmset(self.KEY.format(ticket=ticket), entity.model_dump())
+        await self.redis.hmset(
+            self.KEY.format(ticket=ticket),
+            {
+                key: val if val is not None else -1
+                for key, val in entity.model_dump().items()
+            },
+        )
         await self.redis.expire(self.KEY.format(ticket=ticket), time=EXPIRES_IN)
 
         return ticket
