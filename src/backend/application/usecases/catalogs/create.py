@@ -21,7 +21,7 @@ class CreateCatalogUseCase(Interactor[CreateCatalogRequest, CatalogResponse]):
     async def __call__(self, data: CreateCatalogRequest) -> CatalogResponse:
         user = await self.id_provider.get_user()
 
-        if data.parent_id:
+        if data.parent_id is not None:
             # TODO: replace with `exists` query
             await self.catalog_reader.with_id(data.parent_id)
 
