@@ -23,8 +23,7 @@ class DocumentTicketGateway:
         if all(item is None for item in data):
             raise ModelNotFoundError("Ticket not found")
 
-        data = [None if item == -1 else item for item in data]
-        print(data)
+        data = [None if item == b"-1" else item for item in data]
 
         return TicketEntity(**dict(zip(fields, data, strict=True)))
 
