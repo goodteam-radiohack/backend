@@ -9,9 +9,13 @@ from backend.application.gateways.document import DocumentReader, DocumentWriter
 from backend.domain.dto.document import CreateDocumentDTO
 from backend.domain.entities.document import DocumentEntity
 from backend.infrastructure.database.models.document import DocumentModel
+from backend.infrastructure.database.models.user import UserModel
 from backend.infrastructure.errors.gateways.document import DocumentNotFoundError
 
-_OPTIONS = [joinedload(DocumentModel.created_by)]
+_OPTIONS = [
+    joinedload(DocumentModel.created_by).joinedload(UserModel.helper),
+    joinedload(DocumentModel.created_by).joinedload(UserModel.helping_to),
+]
 
 
 @dataclass

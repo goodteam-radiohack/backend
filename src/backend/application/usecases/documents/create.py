@@ -18,12 +18,14 @@ class CreateDocumentUseCase(Interactor[CreateDocumentRequest, CreateDocumentResp
     async def __call__(self, data: CreateDocumentRequest) -> CreateDocumentResponse:
         user = await self.id_provider.get_user()
 
+        user_id = user.helping_to_id or user.id
+
         ticket = await self.ticket.save(
             TicketEntity(
                 catalog_id=data.catalog_id,
                 name=data.name,
                 visibility=data.visibility,
-                user_id=user.id,
+                user_id=user_id,
             )
         )
 

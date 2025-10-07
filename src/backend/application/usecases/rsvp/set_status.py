@@ -13,7 +13,6 @@ from backend.application.gateways.event import EventReader
 from backend.application.gateways.rsvp import RsvpReader, RsvpWriter
 from backend.domain.dto.rsvp import CreateRsvpDTO
 from backend.domain.enum.document import DocumentVisibility
-from backend.infrastructure.errors.gateways.event import EventNotFoundError
 from backend.infrastructure.errors.gateways.rsvp import RsvpNotFoundError
 
 
@@ -31,9 +30,10 @@ class SetRsvpStatusUseCase(Interactor[SetRsvpStatusRequest, SetRsvpStatusRespons
 
     async def __call__(self, data: SetRsvpStatusRequest) -> SetRsvpStatusResponse:
         user = await self.id_provider.get_user()
+        event = await self.event_reader.with_id(data.event_id)
 
-        if not await self.event_reader.exists(data.event_id):
-            raise EventNotFoundError
+        if not event.can_set_rsvp(user):
+            raise UnauthorizedError
 
         if data.reason_document_id:
             document = await self.document_reader.with_id(data.reason_document_id)

@@ -4,9 +4,10 @@ from pydantic import BaseModel
 
 from backend.application.contracts.documents.document import DocumentResponse
 from backend.application.contracts.rsvp.rsvp import RsvpResponse
+from backend.application.contracts.users.user import UserResponse
 from backend.domain.entities.event import EventEntity
 from backend.domain.entities.rsvp import RSVPEntity
-from backend.domain.enum.event import EventStatus
+from backend.domain.enum.event import EventStatus, EventVisibility
 
 
 class EventResponse(BaseModel):
@@ -25,6 +26,9 @@ class EventResponse(BaseModel):
     attachments: list[DocumentResponse]
 
     status: EventStatus
+    visibility: EventVisibility
+
+    event_for: UserResponse | None
 
     @classmethod
     def from_entity(
@@ -45,4 +49,8 @@ class EventResponse(BaseModel):
             attachments=[
                 DocumentResponse.from_entity(item) for item in entity.attachments
             ],
+            visibility=entity.visibility,
+            event_for=(
+                UserResponse.from_entity(entity.event_for) if entity.event_for else None
+            ),
         )

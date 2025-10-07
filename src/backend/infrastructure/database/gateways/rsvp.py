@@ -11,9 +11,17 @@ from backend.domain.dto.rsvp import CreateRsvpDTO
 from backend.domain.entities.rsvp import RSVPEntity
 from backend.infrastructure.database.models.document import DocumentModel
 from backend.infrastructure.database.models.rsvp import RSVPModel
+from backend.infrastructure.database.models.user import UserModel
 from backend.infrastructure.errors.gateways.rsvp import RsvpNotFoundError
 
-_OPTIONS = [joinedload(RSVPModel.reason_document).joinedload(DocumentModel.created_by)]
+_OPTIONS = [
+    joinedload(RSVPModel.reason_document)
+    .joinedload(DocumentModel.created_by)
+    .joinedload(UserModel.helper),
+    joinedload(RSVPModel.reason_document)
+    .joinedload(DocumentModel.created_by)
+    .joinedload(UserModel.helping_to),
+]
 
 
 @dataclass

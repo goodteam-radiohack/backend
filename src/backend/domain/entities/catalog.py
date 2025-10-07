@@ -26,4 +26,4 @@ class CatalogEntity(BaseEntity):
     created_by: UserEntity
 
     def is_author(self, user: UserEntity) -> bool:
-        return self.created_by.id != user.id
+        return self.created_by.id in (user.id, user.helping_to_id)

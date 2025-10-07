@@ -4,16 +4,22 @@ from datetime import datetime
 from sqlalchemy import exists, insert, select, update
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
+from sqlalchemy.orm import joinedload, selectinload
 
 from backend.application.gateways.event import EventReader, EventUpdater, EventWriter
 from backend.domain.dto.event import CreateEventDTO, UpdateEventDTO
 from backend.domain.entities.event import EventEntity
+from backend.domain.enum.event import EventVisibility
 from backend.infrastructure.database.models.document import DocumentModel
 from backend.infrastructure.database.models.event import EventModel
+from backend.infrastructure.database.models.user import UserModel
 from backend.infrastructure.errors.gateways.event import EventNotFoundError
 
-_OPTIONS = [selectinload(EventModel.attachments).joinedload(DocumentModel.created_by)]
+_OPTIONS = [
+    selectinload(EventModel.attachments).joinedload(DocumentModel.created_by),
+    joinedload(EventModel.event_for).joinedload(UserModel.helper),
+    joinedload(EventModel.event_for).joinedload(UserModel.helping_to),
+]
 
 
 @dataclass
@@ -30,10 +36,22 @@ class EventGateway(EventReader, EventWriter, EventUpdater):
 
         return result.to_entity()
 
-    async def all_window(self, start: datetime, end: datetime) -> list[EventEntity]:
+    async def all_window(
+        self, start: datetime, end: datetime, user_id: int
+    ) -> list[EventEntity]:
         stmt = (
             select(EventModel)
-            .where(EventModel.scheduled_at >= start, EventModel.scheduled_at < end)
+            .where(
+                EventModel.scheduled_at >= start,
+                EventModel.scheduled_at < end,
+                (
+                    (EventModel.visibility == EventVisibility.PUBLIC)
+                    | (
+                        (EventModel.visibility == EventVisibility.PRIVATE)
+                        & (EventModel.event_for_id == user_id)
+                    )
+                ),
+            )
             .order_by(EventModel.scheduled_at)
             .options(*_OPTIONS)
         )

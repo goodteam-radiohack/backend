@@ -43,7 +43,9 @@ class GetEventsUseCase(Interactor[GetEventsRequest, GetEventsResponse]):
 
         start, end = self._week_range(data.offset)
 
-        events = await self.event_reader.all_window(start, end)
+        events = await self.event_reader.all_window(
+            start, end, user.helping_to_id or user.id
+        )
         grouped_events = defaultdict(list)
 
         # TODO: это можно оптимизировать немного)

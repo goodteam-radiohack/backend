@@ -4,6 +4,8 @@ from typing import Self
 from pydantic import BaseModel, model_validator
 from pytz import timezone
 
+from backend.domain.enum.event import EventVisibility
+
 
 class CreateEventRequest(BaseModel):
     name: str
@@ -13,6 +15,8 @@ class CreateEventRequest(BaseModel):
 
     scheduled_at: datetime
     ends_at: datetime
+
+    visibility: EventVisibility = EventVisibility.PRIVATE
 
     @model_validator(mode="after")
     def validate_it(self) -> Self:
@@ -35,6 +39,8 @@ class OmittedUpdateEventRequest(BaseModel):
 
     scheduled_at: datetime | None = None
     ends_at: datetime | None = None
+
+    visibility: EventVisibility | None = None
 
 
 class UpdateEventRequest(OmittedUpdateEventRequest):

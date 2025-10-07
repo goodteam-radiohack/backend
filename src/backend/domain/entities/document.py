@@ -21,4 +21,4 @@ class DocumentEntity(BaseEntity):
     visibility: DocumentVisibility
 
     def is_author(self, user: UserEntity) -> bool:
-        return user.id == self.created_by.id
+        return self.created_by_id in (user.id, user.helping_to_id)

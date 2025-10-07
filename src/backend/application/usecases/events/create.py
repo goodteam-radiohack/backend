@@ -8,6 +8,7 @@ from backend.application.contracts.events.event import EventResponse
 from backend.application.errors.access import UnauthorizedError
 from backend.application.gateways.event import EventWriter
 from backend.domain.dto.event import CreateEventDTO
+from backend.domain.enum.event import EventVisibility
 from backend.domain.enum.user import UserRole
 
 
@@ -22,8 +23,10 @@ class CreateEventUseCase(Interactor[CreateEventRequest, EventResponse]):
     async def __call__(self, data: CreateEventRequest) -> EventResponse:
         user = await self.id_provider.get_user()
 
-        if user.role != UserRole.ADMIN:
-            raise UnauthorizedError
+        if user.role != UserRole.ADMIN and data.visibility == EventVisibility.PUBLIC:
+            raise UnauthorizedError("only admins can create public events")
+
+        event_for_id = user.helping_to_id or user.id
 
         async with self.uow:
             event = await self.event_writer.create(
@@ -33,6 +36,13 @@ class CreateEventUseCase(Interactor[CreateEventRequest, EventResponse]):
                     image=data.image,
                     scheduled_at=data.scheduled_at,
                     ends_at=data.ends_at,
+                    event_for_id=(
+                        None
+                        if user.role == UserRole.ADMIN
+                        and data.visibility == EventVisibility.PUBLIC
+                        else event_for_id
+                    ),
+                    visibility=data.visibility,
                 )
             )
 

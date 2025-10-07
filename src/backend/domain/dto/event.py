@@ -2,7 +2,7 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
-from backend.domain.enum.event import EventStatus
+from backend.domain.enum.event import EventStatus, EventVisibility
 
 
 class CreateEventDTO(BaseModel):
@@ -15,6 +15,8 @@ class CreateEventDTO(BaseModel):
     ends_at: datetime
 
     status: EventStatus = EventStatus.SCHEDULED
+    visibility: EventVisibility = EventVisibility.PUBLIC
+    event_for_id: int | None
 
 
 class UpdateEventDTO(BaseModel):

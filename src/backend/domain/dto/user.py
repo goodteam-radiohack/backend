@@ -8,3 +8,4 @@ class CreateUserDTO(BaseModel):
     hashed_password: str
 
     role: UserRole = UserRole.DEPUTE
+    helping_for_id: int | None

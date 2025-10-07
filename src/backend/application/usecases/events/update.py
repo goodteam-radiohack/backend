@@ -22,12 +22,12 @@ class UpdateEventUseCase(Interactor[UpdateEventRequest, EventResponse]):
 
     async def __call__(self, data: UpdateEventRequest) -> EventResponse:
         user = await self.id_provider.get_user()
+        event = await self.event_reader.with_id(data.id)
 
-        if user.role != UserRole.ADMIN:
+        if user.role != UserRole.ADMIN and not event.has_access(user):
             raise UnauthorizedError
 
         # TODO: use `exists` query
-        await self.event_reader.with_id(data.id)
 
         async with self.uow:
             event = await self.event_updater.update(

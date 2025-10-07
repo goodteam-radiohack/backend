@@ -1,14 +1,15 @@
 from datetime import datetime
 
-from sqlalchemy import DateTime
+from sqlalchemy import DateTime, ForeignKey
 from sqlalchemy.dialects.postgresql import ENUM
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from backend.domain.entities.event import EventEntity
-from backend.domain.enum.event import EventStatus
+from backend.domain.enum.event import EventStatus, EventVisibility
 from backend.infrastructure.database.models.associations import event_document
 from backend.infrastructure.database.models.base import BaseModel
 from backend.infrastructure.database.models.document import DocumentModel
+from backend.infrastructure.database.models.user import UserModel
 
 
 class EventModel(BaseModel):
@@ -29,6 +30,15 @@ class EventModel(BaseModel):
     status: Mapped[EventStatus] = mapped_column(
         ENUM(EventStatus, name="event_statutes"), server_default="SCHEDULED"
     )
+
+    visibility: Mapped[EventVisibility] = mapped_column(
+        ENUM(EventVisibility, name="event_visibility"), server_default="PUBLIC"
+    )
+
+    event_for_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id"), nullable=True
+    )
+    event_for: Mapped[UserModel | None] = relationship()
 
     def to_entity(self) -> EventEntity:
         return EventEntity.model_validate(self)

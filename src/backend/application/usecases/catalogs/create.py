@@ -25,15 +25,17 @@ class CreateCatalogUseCase(Interactor[CreateCatalogRequest, CatalogResponse]):
             # TODO: replace with `exists` query
             await self.catalog_reader.with_id(data.parent_id)
 
+        user_id = user.helping_to_id or user.id
+
         async with self.uow:
             catalog = await self.catalog_writer.create(
                 CreateCatalogDTO(
                     name=data.name,
                     parent_id=data.parent_id,
                     visibility=data.visibility,
-                    created_by_id=user.id,
+                    created_by_id=user_id,
                 ),
-                user.id,
+                user_id,
             )
 
             await self.uow.commit()

@@ -106,7 +106,7 @@ class UploadDocumentUseCase(Interactor[UploadDocumentRequest, DocumentResponse])
         user = await self.id_provider.get_user()
         upload_state = await self.ticket.with_uuid(data.ticket)
 
-        if upload_state.user_id != user.id:
+        if upload_state.user_id not in (user.id, user.helping_to_id):
             raise UnauthorizedError
 
         await self.ticket.delete(data.ticket)

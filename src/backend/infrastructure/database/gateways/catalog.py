@@ -17,12 +17,19 @@ from backend.domain.enum.catalog import CatalogVisibility
 from backend.domain.enum.document import DocumentVisibility
 from backend.infrastructure.database.models.catalog import CatalogModel
 from backend.infrastructure.database.models.document import DocumentModel
+from backend.infrastructure.database.models.user import UserModel
 from backend.infrastructure.errors.gateways.catalog import CatalogNotFoundError
 
 _OPTIONS = [
     selectinload(CatalogModel.child),
-    selectinload(CatalogModel.documents).joinedload(DocumentModel.created_by),
-    joinedload(CatalogModel.created_by),
+    selectinload(CatalogModel.documents)
+    .joinedload(DocumentModel.created_by)
+    .joinedload(UserModel.helper),
+    selectinload(CatalogModel.documents)
+    .joinedload(DocumentModel.created_by)
+    .joinedload(UserModel.helping_to),
+    joinedload(CatalogModel.created_by).joinedload(UserModel.helper),
+    joinedload(CatalogModel.created_by).joinedload(UserModel.helping_to),
 ]
 
 # shared queries
