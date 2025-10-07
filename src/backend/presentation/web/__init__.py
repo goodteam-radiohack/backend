@@ -23,17 +23,17 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 def create_app() -> FastAPI:
     app = FastAPI(title="DumaHelper", lifespan=lifespan)
 
+    container = get_container()
+    setup_dishka(container, app)
+
+    setup_routes(app)
+    setup_errors_handler(app)
+
     app.add_middleware(
         CORSMiddleware,
         allow_origins=["*"],
         allow_methods=["*"],
         allow_headers=["*"],
     )
-
-    container = get_container()
-    setup_dishka(container, app)
-
-    setup_routes(app)
-    setup_errors_handler(app)
 
     return app
