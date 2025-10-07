@@ -13,6 +13,8 @@ from backend.application.usecases.documents.get import GetDocumentUseCase
 from backend.application.usecases.documents.upload import UploadDocumentUseCase
 from backend.application.usecases.events.get import GetEventsUseCase
 from backend.application.usecases.rsvp.set_status import SetRsvpStatusUseCase
+from backend.application.usecases.users.create import CreateUserUseCase
+from backend.application.usecases.users.get import GetUsersUseCase
 from backend.application.usecases.users.me import GetMeUseCase
 from backend.infrastructure.database.uow import UnitOfWorkImpl
 
@@ -26,6 +28,8 @@ class UsecasesProvider(Provider):
 
     # users
     me = provide(GetMeUseCase)
+    get_all = provide(GetUsersUseCase)
+    create_user = provide(CreateUserUseCase)
 
     # events
     get_events = provide(GetEventsUseCase)

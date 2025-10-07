@@ -1,4 +1,3 @@
-from collections.abc import Iterable
 from typing import Protocol
 
 from backend.domain.dto.user import CreateUserDTO
@@ -10,7 +9,7 @@ class UserReader(Protocol):
     async def with_id(self, user_id: int) -> UserEntity: ...
     async def with_username(self, username: str) -> UserEntity: ...
 
-    async def all(self, excluded_roles: Iterable[UserRole]) -> list[UserEntity]: ...
+    async def all(self, limit: int, offset: int) -> tuple[list[UserEntity], int]: ...
 
 
 class UserWriter(Protocol):

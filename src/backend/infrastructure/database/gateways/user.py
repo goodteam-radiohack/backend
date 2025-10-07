@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from sqlalchemy import insert, select, update
+from sqlalchemy import func, insert, select, update
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -35,6 +35,15 @@ class UserGateway(UserReader, UserWriter, UserUpdater):
             raise UserNotFoundError from exc
 
         return result.to_entity()
+
+    async def all(self, limit: int, offset: int) -> tuple[list[UserEntity], int]:
+        stmt = select(UserModel).limit(limit).offset(offset).order_by(UserModel.id)
+        total_stmt = select(func.count(UserModel.id)).select_from(UserModel)
+
+        results = (await self.session.scalars(stmt)).all()
+        total_result = (await self.session.scalars(total_stmt)).one()
+
+        return [result.to_entity() for result in results], total_result
 
     async def create(self, dto: CreateUserDTO) -> UserEntity:
         stmt = (
