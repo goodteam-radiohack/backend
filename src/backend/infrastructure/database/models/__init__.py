@@ -1,3 +1,4 @@
+from .associations import event_document
 from .base import BaseModel
 from .catalog import CatalogModel
 from .devices import DeviceModel
@@ -14,4 +15,5 @@ __all__ = (
     "EventModel",
     "RSVPModel",
     "UserModel",
+    "event_document",
 )

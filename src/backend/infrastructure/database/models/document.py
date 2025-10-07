@@ -1,12 +1,18 @@
+from typing import TYPE_CHECKING
+
 from sqlalchemy import BigInteger, ForeignKey
 from sqlalchemy.dialects.postgresql import ENUM
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from backend.domain.entities.document import DocumentEntity
 from backend.domain.enum.document import DocumentVisibility
+from backend.infrastructure.database.models.associations import event_document
 from backend.infrastructure.database.models.base import BaseModel
 from backend.infrastructure.database.models.catalog import CatalogModel
 from backend.infrastructure.database.models.user import UserModel
+
+if TYPE_CHECKING:
+    from backend.infrastructure.database.models.event import EventModel
 
 
 class DocumentModel(BaseModel):
@@ -32,6 +38,10 @@ class DocumentModel(BaseModel):
 
     visibility: Mapped[DocumentVisibility] = mapped_column(
         ENUM(DocumentVisibility, name="document_visibility"), server_default="PUBLIC"
+    )
+
+    events: Mapped[list["EventModel"]] = relationship(
+        secondary=event_document, back_populates="attachments"
     )
 
     def to_entity(self) -> DocumentEntity:

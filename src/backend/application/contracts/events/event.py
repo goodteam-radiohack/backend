@@ -2,6 +2,7 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
+from backend.application.contracts.documents.document import DocumentResponse
 from backend.application.contracts.rsvp.rsvp import RsvpResponse
 from backend.domain.entities.event import EventEntity
 from backend.domain.entities.rsvp import RSVPEntity
@@ -21,6 +22,8 @@ class EventResponse(BaseModel):
 
     rsvp: RsvpResponse | None
 
+    attachments: list[DocumentResponse]
+
     status: EventStatus
 
     @classmethod
@@ -39,4 +42,7 @@ class EventResponse(BaseModel):
             ends_at=entity.ends_at,
             status=entity.status,
             rsvp=RsvpResponse.from_entity(rsvp, document_url) if rsvp else None,
+            attachments=[
+                DocumentResponse.from_entity(item) for item in entity.attachments
+            ],
         )
