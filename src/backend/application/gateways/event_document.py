@@ -1,0 +1,6 @@
+from typing import Protocol
+
+
+class EventDocumentWriter(Protocol):
+    async def attach_document(self, event_id: int, document_id: int) -> None: ...
+    async def unattach_document(self, event_id: int, document_id: int) -> None: ...

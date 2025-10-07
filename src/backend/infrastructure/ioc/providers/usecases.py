@@ -11,6 +11,10 @@ from backend.application.usecases.documents.create import CreateDocumentUseCase
 from backend.application.usecases.documents.delete import DeleteDocumentUseCase
 from backend.application.usecases.documents.get import GetDocumentUseCase
 from backend.application.usecases.documents.upload import UploadDocumentUseCase
+from backend.application.usecases.events.attach_document import (
+    AttachDocumentUseCase,
+    UnAttachDocumentUseCase,
+)
 from backend.application.usecases.events.create import CreateEventUseCase
 from backend.application.usecases.events.get import GetEventsUseCase
 from backend.application.usecases.events.update import UpdateEventUseCase
@@ -52,5 +56,9 @@ class UsecasesProvider(Provider):
     upload_document = provide(UploadDocumentUseCase)
     create_document = provide(CreateDocumentUseCase)
     delete_document = provide(DeleteDocumentUseCase)
+
+    # attach
+    attach_document = provide(AttachDocumentUseCase)
+    unattach_document = provide(UnAttachDocumentUseCase)
 
     uow = provide(UnitOfWorkImpl, provides=UnitOfWork)

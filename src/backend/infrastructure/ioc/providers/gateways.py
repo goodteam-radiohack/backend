@@ -8,6 +8,7 @@ from backend.application.gateways.catalog import (
 from backend.application.gateways.device import DeviceReader, DeviceWriter
 from backend.application.gateways.document import DocumentReader, DocumentWriter
 from backend.application.gateways.event import EventReader, EventUpdater, EventWriter
+from backend.application.gateways.event_document import EventDocumentWriter
 from backend.application.gateways.rsvp import RsvpReader, RsvpWriter
 from backend.application.gateways.user import UserReader, UserUpdater, UserWriter
 from backend.infrastructure.cache.session import SessionGateway
@@ -15,6 +16,7 @@ from backend.infrastructure.database.gateways.catalog import CatalogGateway
 from backend.infrastructure.database.gateways.device import DeviceGateway
 from backend.infrastructure.database.gateways.document import DocumentGateway
 from backend.infrastructure.database.gateways.event import EventGateway
+from backend.infrastructure.database.gateways.event_document import EventDocumentGateway
 from backend.infrastructure.database.gateways.rsvp import RsvpGateway
 from backend.infrastructure.database.gateways.user import UserGateway
 from backend.infrastructure.errors.cache.ticket import DocumentTicketGateway
@@ -72,6 +74,11 @@ class GatewaysProvider(Provider):
             DocumentReader,
             DocumentWriter,
         ],
+    )
+
+    event_document_gate = provide(
+        EventDocumentGateway,
+        provides=EventDocumentWriter,
     )
 
     session_gateway = provide(SessionGateway)

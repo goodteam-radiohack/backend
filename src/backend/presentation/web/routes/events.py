@@ -4,6 +4,10 @@ from dishka import FromDishka
 from dishka.integrations.fastapi import DishkaRoute
 from fastapi import APIRouter, Depends, Query
 
+from backend.application.contracts.events.attach_document import (
+    AttachDocumentRequest,
+    UnAttachDocumentRequest,
+)
 from backend.application.contracts.events.create import (
     CreateEventRequest,
     OmittedUpdateEventRequest,
@@ -14,6 +18,10 @@ from backend.application.contracts.events.get import GetEventsRequest, GetEvents
 from backend.application.contracts.rsvp.set_status import (
     SetRsvpStatusRequest,
     SetRsvpStatusResponse,
+)
+from backend.application.usecases.events.attach_document import (
+    AttachDocumentUseCase,
+    UnAttachDocumentUseCase,
 )
 from backend.application.usecases.events.create import CreateEventUseCase
 from backend.application.usecases.events.get import GetEventsUseCase
@@ -72,5 +80,33 @@ async def set_rsvp_status(
             status=req.status,
             reason=req.reason,
             reason_document_id=req.reason_document_id,
+        )
+    )
+
+
+@router.post("/{event_id}/attach")
+async def attach_document(
+    event_id: int,
+    document_id: int,
+    interactor: FromDishka[AttachDocumentUseCase],
+) -> EventResponse:
+    return await interactor(
+        AttachDocumentRequest(
+            event_id=event_id,
+            document_id=document_id,
+        )
+    )
+
+
+@router.delete("/{event_id}/attach")
+async def unattach_document(
+    event_id: int,
+    document_id: int,
+    interactor: FromDishka[UnAttachDocumentUseCase],
+) -> EventResponse:
+    return await interactor(
+        UnAttachDocumentRequest(
+            event_id=event_id,
+            document_id=document_id,
         )
     )
