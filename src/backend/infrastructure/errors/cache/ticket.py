@@ -24,6 +24,7 @@ class DocumentTicketGateway:
             raise ModelNotFoundError("Ticket not found")
 
         data = [None if item == -1 else item for item in data]
+        print(data)
 
         return TicketEntity(**dict(zip(fields, data, strict=True)))
 
@@ -33,7 +34,7 @@ class DocumentTicketGateway:
         await self.redis.hmset(
             self.KEY.format(ticket=ticket),
             {
-                key: val if val is not None else -1
+                key: -1 if val is None else val
                 for key, val in entity.model_dump().items()
             },
         )
