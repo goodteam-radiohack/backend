@@ -9,10 +9,11 @@ from sqlalchemy.orm import joinedload
 from backend.application.gateways.rsvp import RsvpReader, RsvpWriter
 from backend.domain.dto.rsvp import CreateRsvpDTO
 from backend.domain.entities.rsvp import RSVPEntity
+from backend.infrastructure.database.models.document import DocumentModel
 from backend.infrastructure.database.models.rsvp import RSVPModel
 from backend.infrastructure.errors.gateways.rsvp import RsvpNotFoundError
 
-_OPTIONS = [joinedload(RSVPModel.reason_document)]
+_OPTIONS = [joinedload(RSVPModel.reason_document).joinedload(DocumentModel.created_by)]
 
 
 @dataclass
