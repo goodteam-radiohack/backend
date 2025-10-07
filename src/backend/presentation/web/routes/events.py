@@ -42,5 +42,6 @@ async def set_rsvp_status(
             event_id=event_id,
             status=req.status,
             reason=req.reason,
+            reason_document_id=req.reason_document_id,
         )
     )
