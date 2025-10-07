@@ -3,6 +3,8 @@ from dishka import Provider, Scope, provide
 from backend.application.common.uow import UnitOfWork
 from backend.application.usecases.auth.logout import LogOutUseCase
 from backend.application.usecases.auth.signin import SignInUseCase
+from backend.application.usecases.catalogs.create import CreateCatalogUseCase
+from backend.application.usecases.catalogs.delete import DeleteCatalogUseCase
 from backend.application.usecases.catalogs.get import GetCatalogUseCase
 from backend.application.usecases.catalogs.get_root import GetRootCatalogsUseCase
 from backend.application.usecases.documents.create import CreateDocumentUseCase
@@ -34,6 +36,8 @@ class UsecasesProvider(Provider):
     # catalogs
     get_root_catalogs = provide(GetRootCatalogsUseCase)
     get_catalog = provide(GetCatalogUseCase)
+    create_catalog = provide(CreateCatalogUseCase)
+    delete_catalog = provide(DeleteCatalogUseCase)
 
     # documents
     get_document = provide(GetDocumentUseCase)

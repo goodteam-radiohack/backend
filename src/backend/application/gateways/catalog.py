@@ -13,6 +13,7 @@ class CatalogReader(Protocol):
 
 class CatalogWriter(Protocol):
     async def create(self, dto: CreateCatalogDTO) -> CatalogEntity: ...
+    async def delete(self, catalog_id: int) -> None: ...
 
 
 class CatalogUpdater(Protocol):

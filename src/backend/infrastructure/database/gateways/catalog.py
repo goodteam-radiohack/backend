@@ -1,10 +1,10 @@
 from dataclasses import dataclass
 from typing import Any
 
-from sqlalchemy import insert, select, update
+from sqlalchemy import delete, insert, select, update
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload, with_loader_criteria
+from sqlalchemy.orm import joinedload, selectinload, with_loader_criteria
 
 from backend.application.gateways.catalog import (
     CatalogReader,
@@ -21,6 +21,7 @@ from backend.infrastructure.errors.gateways.catalog import CatalogNotFoundError
 _OPTIONS = [
     selectinload(CatalogModel.child),
     selectinload(CatalogModel.documents).joinedload(DocumentModel.created_by),
+    joinedload(CatalogModel.created_by),
 ]
 
 # shared queries
@@ -92,3 +93,7 @@ class CatalogGateway(CatalogReader, CatalogWriter, CatalogUpdater):
         await self.session.execute(stmt)
 
         return await self.with_id(dto.id)
+
+    async def delete(self, catalog_id: int) -> None:
+        stmt = delete(CatalogModel).where(CatalogModel.id == catalog_id)
+        await self.session.execute(stmt)

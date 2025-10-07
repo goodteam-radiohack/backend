@@ -9,6 +9,7 @@ from backend.application.contracts.documents.delete import (
 )
 from backend.application.errors.access import UnauthorizedError
 from backend.application.gateways.document import DocumentReader, DocumentWriter
+from backend.domain.enum.user import UserRole
 from backend.domain.services.s3 import S3Service
 
 
@@ -27,7 +28,7 @@ class DeleteDocumentUseCase(Interactor[DeleteDocumentRequest, DeleteDocumentResp
         user = await self.id_provider.get_user()
         document = await self.document_reader.with_id(data.id)
 
-        if not document.is_author(user):
+        if not user.role == UserRole.ADMIN and not document.is_author(user):
             raise UnauthorizedError
 
         await self.s3_service.delete(document.storage_key)

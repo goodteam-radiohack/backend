@@ -3,11 +3,18 @@ from dishka.integrations.fastapi import DishkaRoute
 from fastapi import APIRouter, Depends
 
 from backend.application.contracts.catalogs.catalog import CatalogResponse
+from backend.application.contracts.catalogs.create import CreateCatalogRequest
+from backend.application.contracts.catalogs.delete import (
+    DeleteCatalogRequest,
+    DeleteCatalogResponse,
+)
 from backend.application.contracts.catalogs.get import GetCatalogRequest
 from backend.application.contracts.catalogs.get_root import (
     GetRootCatalogsRequest,
     GetRootCatalogsResponse,
 )
+from backend.application.usecases.catalogs.create import CreateCatalogUseCase
+from backend.application.usecases.catalogs.delete import DeleteCatalogUseCase
 from backend.application.usecases.catalogs.get import GetCatalogUseCase
 from backend.application.usecases.catalogs.get_root import GetRootCatalogsUseCase
 from backend.presentation.web.dependencies.authorization import authorization_header
@@ -27,8 +34,22 @@ async def get_root_catalogs(
     return await interactor(GetRootCatalogsRequest())
 
 
+@router.post("")
+async def create_catalog(
+    req: CreateCatalogRequest, interactor: FromDishka[CreateCatalogUseCase]
+) -> CatalogResponse:
+    return await interactor(req)
+
+
 @router.get("/{catalog_id}")
 async def get_catalog_by_id(
     catalog_id: int, interactor: FromDishka[GetCatalogUseCase]
 ) -> CatalogResponse:
     return await interactor(GetCatalogRequest(id=catalog_id))
+
+
+@router.delete("/{catalog_id}")
+async def delete_catalog(
+    catalog_id: int, interactor: FromDishka[DeleteCatalogUseCase]
+) -> DeleteCatalogResponse:
+    return await interactor(DeleteCatalogRequest(id=catalog_id))
