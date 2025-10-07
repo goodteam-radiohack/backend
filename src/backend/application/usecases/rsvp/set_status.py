@@ -7,9 +7,12 @@ from backend.application.contracts.rsvp.set_status import (
     SetRsvpStatusRequest,
     SetRsvpStatusResponse,
 )
+from backend.application.errors.access import UnauthorizedError
+from backend.application.gateways.document import DocumentReader
 from backend.application.gateways.event import EventReader
 from backend.application.gateways.rsvp import RsvpReader, RsvpWriter
 from backend.domain.dto.rsvp import CreateRsvpDTO
+from backend.domain.enum.document import DocumentVisibility
 from backend.infrastructure.errors.gateways.event import EventNotFoundError
 from backend.infrastructure.errors.gateways.rsvp import RsvpNotFoundError
 
@@ -18,6 +21,7 @@ from backend.infrastructure.errors.gateways.rsvp import RsvpNotFoundError
 class SetRsvpStatusUseCase(Interactor[SetRsvpStatusRequest, SetRsvpStatusResponse]):
     id_provider: IdProvider
 
+    document_reader: DocumentReader
     event_reader: EventReader
 
     rsvp_reader: RsvpReader
@@ -30,6 +34,17 @@ class SetRsvpStatusUseCase(Interactor[SetRsvpStatusRequest, SetRsvpStatusRespons
 
         if not await self.event_reader.exists(data.event_id):
             raise EventNotFoundError
+
+        if data.reason_document_id:
+            document = await self.document_reader.with_id(data.reason_document_id)
+
+            if (
+                document.visibility == DocumentVisibility.PRIVATE
+                and not document.is_author(user)
+            ):
+                raise UnauthorizedError(
+                    "Unauthorized (document is private and uploaded by another user)"
+                )
 
         async with self.uow:
             try:
@@ -46,6 +61,7 @@ class SetRsvpStatusUseCase(Interactor[SetRsvpStatusRequest, SetRsvpStatusRespons
                     user_id=user.id,
                     status=data.status,
                     reason=data.reason,
+                    reason_document_id=data.reason_document_id,
                 )
             )
 

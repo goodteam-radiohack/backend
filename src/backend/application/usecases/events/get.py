@@ -10,13 +10,17 @@ from backend.application.contracts.events.event import EventResponse
 from backend.application.contracts.events.get import GetEventsRequest, GetEventsResponse
 from backend.application.gateways.event import EventReader
 from backend.application.gateways.rsvp import RsvpReader
+from backend.domain.services.s3 import S3Service
 
 TZ = timezone("Asia/Yekaterinburg")
+EXPIRES_IN = timedelta(hours=3)
 
 
 @dataclass
 class GetEventsUseCase(Interactor[GetEventsRequest, GetEventsResponse]):
     id_provider: IdProvider
+
+    s3_service: S3Service
 
     rsvp_reader: RsvpReader
     event_reader: EventReader
@@ -50,7 +54,15 @@ class GetEventsUseCase(Interactor[GetEventsRequest, GetEventsResponse]):
 
         for event in events:
             rsvp = next(filter(lambda x: x.event_id == event.id, rsvps), None)
-            items.append(EventResponse.from_entity(event, rsvp))
+            document_url = (
+                await self.s3_service.get_url(
+                    rsvp.reason_document.storage_key, EXPIRES_IN
+                )
+                if rsvp and rsvp.reason_document
+                else None
+            )
+
+            items.append(EventResponse.from_entity(event, rsvp, document_url))
 
         for item in items:
             grouped_events[item.scheduled_at.astimezone(tz=TZ).date()].append(item)

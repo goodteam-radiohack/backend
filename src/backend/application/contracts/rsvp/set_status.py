@@ -8,6 +8,7 @@ class SetRsvpStatusRequest(BaseModel):
 
     status: RSVPStatus
     reason: str | None
+    reason_document_id: int | None
 
 
 class SetRsvpStatusResponse(BaseModel):

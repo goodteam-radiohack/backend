@@ -25,7 +25,10 @@ class EventResponse(BaseModel):
 
     @classmethod
     def from_entity(
-        cls, entity: EventEntity, rsvp: RSVPEntity | None = None
+        cls,
+        entity: EventEntity,
+        rsvp: RSVPEntity | None = None,
+        document_url: str | None = None,
     ) -> "EventResponse":
         return EventResponse(
             id=entity.id,
@@ -35,5 +38,5 @@ class EventResponse(BaseModel):
             scheduled_at=entity.scheduled_at,
             ends_at=entity.ends_at,
             status=entity.status,
-            rsvp=RsvpResponse.from_entity(rsvp) if rsvp else None,
+            rsvp=RsvpResponse.from_entity(rsvp, document_url) if rsvp else None,
         )
