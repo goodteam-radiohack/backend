@@ -25,7 +25,7 @@ class DeleteCatalogUseCase(Interactor[DeleteCatalogRequest, DeleteCatalogRespons
     async def __call__(self, data: DeleteCatalogRequest) -> DeleteCatalogResponse:
         user = await self.id_provider.get_user()
 
-        catalog = await self.catalog_reader.with_id(data.id)
+        catalog = await self.catalog_reader.with_id(data.id, user.id)
 
         if user.role != UserRole.ADMIN and not catalog.is_author(user):
             raise UnauthorizedError
