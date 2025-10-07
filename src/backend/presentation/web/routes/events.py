@@ -4,12 +4,20 @@ from dishka import FromDishka
 from dishka.integrations.fastapi import DishkaRoute
 from fastapi import APIRouter, Depends, Query
 
+from backend.application.contracts.events.create import (
+    CreateEventRequest,
+    OmittedUpdateEventRequest,
+    UpdateEventRequest,
+)
+from backend.application.contracts.events.event import EventResponse
 from backend.application.contracts.events.get import GetEventsRequest, GetEventsResponse
 from backend.application.contracts.rsvp.set_status import (
     SetRsvpStatusRequest,
     SetRsvpStatusResponse,
 )
+from backend.application.usecases.events.create import CreateEventUseCase
 from backend.application.usecases.events.get import GetEventsUseCase
+from backend.application.usecases.events.update import UpdateEventUseCase
 from backend.application.usecases.rsvp.set_status import SetRsvpStatusUseCase
 from backend.presentation.web.dependencies.authorization import authorization_header
 from backend.presentation.web.schemas.events import SetRsvpStatusSchema
@@ -29,6 +37,27 @@ async def get_events(
     offset: Annotated[int, Query()] = 0,
 ) -> GetEventsResponse:
     return await interactor(GetEventsRequest(period=period, offset=offset))
+
+
+@router.post("")
+async def create_event(
+    req: CreateEventRequest, interactor: FromDishka[CreateEventUseCase]
+) -> EventResponse:
+    return await interactor(req)
+
+
+@router.patch("/{event_id}")
+async def update_event(
+    event_id: int,
+    req: OmittedUpdateEventRequest,
+    interactor: FromDishka[UpdateEventUseCase],
+) -> EventResponse:
+    return await interactor(
+        UpdateEventRequest(
+            id=event_id,
+            **req.model_dump(exclude_unset=True),
+        )
+    )
 
 
 @router.post("/{event_id}/rsvp")

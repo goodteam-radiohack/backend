@@ -11,7 +11,9 @@ from backend.application.usecases.documents.create import CreateDocumentUseCase
 from backend.application.usecases.documents.delete import DeleteDocumentUseCase
 from backend.application.usecases.documents.get import GetDocumentUseCase
 from backend.application.usecases.documents.upload import UploadDocumentUseCase
+from backend.application.usecases.events.create import CreateEventUseCase
 from backend.application.usecases.events.get import GetEventsUseCase
+from backend.application.usecases.events.update import UpdateEventUseCase
 from backend.application.usecases.rsvp.set_status import SetRsvpStatusUseCase
 from backend.application.usecases.users.create import CreateUserUseCase
 from backend.application.usecases.users.get import GetUsersUseCase
@@ -33,6 +35,8 @@ class UsecasesProvider(Provider):
 
     # events
     get_events = provide(GetEventsUseCase)
+    create_event = provide(CreateEventUseCase)
+    update_event = provide(UpdateEventUseCase)
 
     # rsvp
     set_rsvp_status = provide(SetRsvpStatusUseCase)
