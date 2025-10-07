@@ -89,14 +89,14 @@ class CatalogGateway(CatalogReader, CatalogWriter, CatalogUpdater):
         results = (await self.session.scalars(stmt)).all()
         return [result.to_entity() for result in results]
 
-    async def create(self, dto: CreateCatalogDTO) -> CatalogEntity:
+    async def create(self, dto: CreateCatalogDTO, user_id: int) -> CatalogEntity:
         stmt = (
             insert(CatalogModel).values(**dto.model_dump()).returning(CatalogModel.id)
         )
 
         catalog_id = (await self.session.execute(stmt)).scalar_one()
 
-        return await self.with_id(catalog_id)
+        return await self.with_id(catalog_id, user_id)
 
     async def update(self, dto: UpdateCatalogDTO) -> CatalogEntity:
         stmt = (

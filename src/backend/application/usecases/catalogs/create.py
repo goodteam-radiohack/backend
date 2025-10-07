@@ -32,7 +32,8 @@ class CreateCatalogUseCase(Interactor[CreateCatalogRequest, CatalogResponse]):
                     parent_id=data.parent_id,
                     visibility=data.visibility,
                     created_by_id=user.id,
-                )
+                ),
+                user.id,
             )
 
             await self.uow.commit()
