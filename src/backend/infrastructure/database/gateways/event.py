@@ -9,10 +9,11 @@ from sqlalchemy.orm import selectinload
 from backend.application.gateways.event import EventReader, EventUpdater, EventWriter
 from backend.domain.dto.event import CreateEventDTO, UpdateEventDTO
 from backend.domain.entities.event import EventEntity
+from backend.infrastructure.database.models.document import DocumentModel
 from backend.infrastructure.database.models.event import EventModel
 from backend.infrastructure.errors.gateways.event import EventNotFoundError
 
-_OPTIONS = [selectinload(EventModel.attachments)]
+_OPTIONS = [selectinload(EventModel.attachments).joinedload(DocumentModel.created_by)]
 
 
 @dataclass
