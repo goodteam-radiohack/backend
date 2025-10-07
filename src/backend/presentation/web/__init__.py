@@ -1,4 +1,3 @@
-import os
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
@@ -21,12 +20,6 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     await container.close()
 
 
-ORIGINS = (
-    "http://localhost:5173",
-    os.getenv("WEB_ORIGIN"),
-)
-
-
 def create_app() -> FastAPI:
     app = FastAPI(title="DumaHelper", lifespan=lifespan)
 
@@ -38,7 +31,7 @@ def create_app() -> FastAPI:
 
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=ORIGINS,
+        allow_origins=["*"],
         allow_methods=["*"],
         allow_headers=["*"],
         allow_credentials=True,
