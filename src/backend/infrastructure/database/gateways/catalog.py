@@ -13,6 +13,7 @@ from backend.application.gateways.catalog import (
 )
 from backend.domain.dto.catalog import CreateCatalogDTO, UpdateCatalogDTO
 from backend.domain.entities.catalog import CatalogEntity
+from backend.domain.enum.catalog import CatalogVisibility
 from backend.domain.enum.document import DocumentVisibility
 from backend.infrastructure.database.models.catalog import CatalogModel
 from backend.infrastructure.database.models.document import DocumentModel
@@ -43,7 +44,14 @@ class CatalogGateway(CatalogReader, CatalogWriter, CatalogUpdater):
     ) -> CatalogEntity:
         stmt = (
             select(CatalogModel)
-            .where(CatalogModel.id == catalog_id)
+            .where(
+                CatalogModel.id == catalog_id,
+                (CatalogModel.visibility == CatalogVisibility.PUBLIC)
+                | (
+                    (CatalogModel.visibility == DocumentVisibility.PRIVATE)
+                    & (CatalogModel.created_by_id == user_id)
+                ),
+            )
             .options(
                 *_OPTIONS,
                 with_loader_criteria(
@@ -62,7 +70,14 @@ class CatalogGateway(CatalogReader, CatalogWriter, CatalogUpdater):
     async def get_root(self, user_id: int | None = None) -> list[CatalogEntity]:
         stmt = (
             select(CatalogModel)
-            .where(CatalogModel.parent_id.is_(None))
+            .where(
+                CatalogModel.parent_id.is_(None),
+                (CatalogModel.visibility == CatalogVisibility.PUBLIC)
+                | (
+                    (CatalogModel.visibility == DocumentVisibility.PRIVATE)
+                    & (CatalogModel.created_by_id == user_id)
+                ),
+            )
             .options(
                 *_OPTIONS,
                 with_loader_criteria(
