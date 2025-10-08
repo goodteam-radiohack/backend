@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from sqlalchemy import delete, insert, select
+from sqlalchemy import delete, exists, insert, select
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -31,6 +31,18 @@ class DeviceGateway(DeviceReader, DeviceWriter):
         results = (await self.session.scalars(stmt)).all()
 
         return [result.to_entity() for result in results]
+
+    async def with_user_id_and_token(self, user_id: int, token: str) -> DeviceEntity:
+        stmt = select(DeviceModel).where(
+            DeviceModel.user_id == user_id, DeviceModel.token == token
+        )
+
+        try:
+            result = (await self.session.scalars(stmt)).one()
+        except NoResultFound as exc:
+            raise DeviceNotFoundError from exc
+
+        return result.to_entity()
 
     async def create(self, dto: CreateDeviceDTO) -> DeviceEntity:
         stmt = (
