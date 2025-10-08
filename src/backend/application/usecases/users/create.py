@@ -35,6 +35,8 @@ class CreateUserUseCase(Interactor[CreateUserRequest, UserResponse]):
                     hashed_password=hashed_password.decode(),
                     role=data.role,
                     helping_for_id=data.helping_for_id,
+                    avatar_url=data.avatar_url,
+                    name=data.name,
                 )
             )
 

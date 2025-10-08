@@ -11,12 +11,15 @@ class CreateUserRequest(BaseModel):
     role: UserRole = UserRole.DEPUTE
     helping_for_id: int | None = None
 
+    name: str
+    avatar_url: str | None
+
     @model_validator(mode="after")
     def _validate(self) -> Self:
         if self.role != UserRole.DEPUTE_HELPER and self.helping_for_id is not None:
             raise ValueError
 
-        if self.role == UserRole.DEPUTE and self.helping_for_id is None:
+        if self.role == UserRole.DEPUTE and self.helping_for_id is not None:
             raise ValueError
 
         return self
