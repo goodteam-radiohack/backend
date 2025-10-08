@@ -1,3 +1,4 @@
+import contextlib
 from collections import defaultdict
 from dataclasses import dataclass
 from datetime import datetime, timedelta
@@ -17,6 +18,7 @@ from backend.application.gateways.event import EventReader
 from backend.application.gateways.rsvp import RsvpReader
 from backend.domain.enum.user import UserRole
 from backend.domain.services.s3 import S3Service
+from backend.infrastructure.errors.gateways.rsvp import RsvpNotFoundError
 
 TZ = timezone("Asia/Yekaterinburg")
 EXPIRES_IN = timedelta(hours=3)
@@ -42,7 +44,11 @@ class GetEventUseCase(Interactor[GetEventRequest, EventResponse]):
         ):
             raise UnauthorizedError
 
-        rsvp = await self.rsvp_reader.with_user_and_event(user.id, event.id)
+        rsvp = None
+
+        with contextlib.suppress(RsvpNotFoundError):
+            rsvp = await self.rsvp_reader.with_user_and_event(user.id, event.id)
+
         document_url = (
             await self.s3_service.get_url(rsvp.reason_document.storage_key, EXPIRES_IN)
             if rsvp and rsvp.reason_document
