@@ -1,6 +1,7 @@
 from collections.abc import AsyncIterator
 
 import aioboto3
+from async_firebase import AsyncFirebaseClient
 from dishka import Provider, Scope, provide
 
 from backend.domain.services.s3 import S3Service
@@ -25,3 +26,14 @@ class S3Provider(Provider):
             yield s3
 
     s3_service = provide(S3Service)
+
+
+class FirebaseProvider(Provider):
+    scope = Scope.APP
+
+    @provide
+    async def provide_firebase(self, settings: AppSettings) -> AsyncFirebaseClient:
+        client = AsyncFirebaseClient()
+        client.creds_from_service_account_info(settings.google.data)
+
+        return client

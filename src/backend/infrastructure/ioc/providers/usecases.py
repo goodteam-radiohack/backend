@@ -8,6 +8,9 @@ from backend.application.usecases.catalogs.delete import DeleteCatalogUseCase
 from backend.application.usecases.catalogs.get import GetCatalogUseCase
 from backend.application.usecases.catalogs.get_root import GetRootCatalogsUseCase
 from backend.application.usecases.devices.register import RegisterDeviceUseCase
+from backend.application.usecases.devices.send_notifications import (
+    SendNotificationsUseCase,
+)
 from backend.application.usecases.documents.create import CreateDocumentUseCase
 from backend.application.usecases.documents.delete import DeleteDocumentUseCase
 from backend.application.usecases.documents.get import GetDocumentUseCase
@@ -43,6 +46,7 @@ class UsecasesProvider(Provider):
     get_event = provide(GetEventUseCase)
     create_event = provide(CreateEventUseCase)
     update_event = provide(UpdateEventUseCase)
+    send_notifications = provide(SendNotificationsUseCase)
 
     # rsvp
     set_rsvp_status = provide(SetRsvpStatusUseCase)

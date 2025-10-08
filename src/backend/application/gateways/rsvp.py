@@ -3,6 +3,7 @@ from typing import Protocol
 
 from backend.domain.dto.rsvp import CreateRsvpDTO
 from backend.domain.entities.rsvp import RSVPEntity
+from backend.domain.enum.rsvp import RSVPStatus
 
 
 class RsvpReader(Protocol):
@@ -12,6 +13,9 @@ class RsvpReader(Protocol):
     ) -> list[RSVPEntity]: ...
 
     async def with_user_and_event(self, user_id: int, event_id: int) -> RSVPEntity: ...
+    async def with_event(
+        self, event_id: int, status: RSVPStatus | None = None
+    ) -> list[RSVPEntity]: ...
 
 
 class RsvpWriter(Protocol):

@@ -14,6 +14,9 @@ x-environment: &shared-env
   S3_SECRET_KEY: ${S3_SECRET_KEY:?}
   S3_BUCKET: ${S3_BUCKET:?}
 
+  NATS_URL: nats://fake:user@nats:4222
+  GOOGLE_DATA: ${GOOGLE_DATA:?}
+
 services:
   web:
     image: depute-backend:latest
@@ -35,6 +38,34 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+
+  queues:
+    image: depute-backend:latest
+    restart: unless-stopped
+
+    command: python -m taskiq workers --workers 1 backend.presentation.queues:broker backend.presentation.queues.task
+
+    environment: *shared-env
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+      nats:
+        condition: service_started
+
+  scheduler:
+    image: depute-backend:latest
+    restart: unless-stopped
+
+    command: python -m taskiq scheduler backend.presentation.queues:scheduler backend.presentation.queues.task
+
+    environment: *shared-env
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+      nats:
+        condition: service_started
 
   migrations:
     image: urfu-entrants:latest
@@ -81,6 +112,16 @@ services:
       timeout: 5s
       retries: 5
 
+  nats:
+    image: nats:latest
+    restart: unless-stopped
+
+    volumes:
+      - nats:/data
+
+    command: ["-js", "-sd=/data", "--user=fake", "--pass=user"]
+
 volumes:
   pg-data:
   redis-data:
+  nats:

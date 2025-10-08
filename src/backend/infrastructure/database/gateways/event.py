@@ -1,7 +1,7 @@
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timedelta
 
-from sqlalchemy import exists, insert, select, update
+from sqlalchemy import exists, func, insert, select, update
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload, selectinload
@@ -9,7 +9,7 @@ from sqlalchemy.orm import joinedload, selectinload
 from backend.application.gateways.event import EventReader, EventUpdater, EventWriter
 from backend.domain.dto.event import CreateEventDTO, UpdateEventDTO
 from backend.domain.entities.event import EventEntity
-from backend.domain.enum.event import EventVisibility
+from backend.domain.enum.event import EventStatus, EventVisibility
 from backend.infrastructure.database.models.document import DocumentModel
 from backend.infrastructure.database.models.event import EventModel
 from backend.infrastructure.database.models.user import UserModel
@@ -20,6 +20,8 @@ _OPTIONS = [
     joinedload(EventModel.event_for).joinedload(UserModel.helper),
     joinedload(EventModel.event_for).joinedload(UserModel.helping_to),
 ]
+
+STARTING_IN = timedelta(hours=1)
 
 
 @dataclass
@@ -53,6 +55,20 @@ class EventGateway(EventReader, EventWriter, EventUpdater):
                 ),
             )
             .order_by(EventModel.scheduled_at)
+            .options(*_OPTIONS)
+        )
+
+        results = (await self.session.scalars(stmt)).all()
+
+        return [result.to_entity() for result in results]
+
+    async def starting_soon(self) -> list[EventEntity]:
+        stmt = (
+            select(EventModel)
+            .where(
+                (EventModel.scheduled_at - func.now()) <= STARTING_IN,
+                EventModel.status == EventStatus.SCHEDULED,
+            )
             .options(*_OPTIONS)
         )
 

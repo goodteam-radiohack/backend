@@ -1,7 +1,5 @@
 from dataclasses import dataclass
 
-from sqlalchemy.exc import NoResultFound
-
 from backend.application.common.id_provider import IdProvider
 from backend.application.common.interactor import Interactor
 from backend.application.common.uow import UnitOfWork

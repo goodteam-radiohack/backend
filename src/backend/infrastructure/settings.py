@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import timedelta
 
-from pydantic import PostgresDsn, RedisDsn, SecretStr
+from pydantic import NatsDsn, PostgresDsn, RedisDsn, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -10,6 +10,14 @@ class WebSettings(BaseSettings):
 
     jwt_secret: SecretStr
     jwt_expires_in: timedelta = timedelta(days=30)
+
+
+class GoogleSettings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_prefix="GOOGLE_", env_file=".env", extra="allow"
+    )
+
+    data: dict[str, str]
 
 
 class S3Settings(BaseSettings):
@@ -73,11 +81,24 @@ class RedisSettings(BaseSettings):
         return dsn.unicode_string()
 
 
+class NatsSettings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_prefix="NATS_", env_file=".env", extra="allow"
+    )
+
+    url: NatsDsn
+
+    def build_connection_uri(self) -> str:
+        return self.url.unicode_string()
+
+
 @dataclass
 class AppSettings:
     database: DatabaseSettings
     redis: RedisSettings
     web: WebSettings
+    nats: NatsSettings
+    google: GoogleSettings
 
     s3: S3Settings
 
@@ -88,4 +109,6 @@ def get_settings() -> AppSettings:
         redis=RedisSettings(),
         web=WebSettings(),
         s3=S3Settings(),
+        nats=NatsSettings(),
+        google=GoogleSettings(),
     )

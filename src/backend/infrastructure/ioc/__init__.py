@@ -1,6 +1,6 @@
 from dishka import AsyncContainer, make_async_container
 
-from backend.infrastructure.ioc.providers.adapters import S3Provider
+from backend.infrastructure.ioc.providers.adapters import FirebaseProvider, S3Provider
 from backend.infrastructure.ioc.providers.auth import AuthProvider
 from backend.infrastructure.ioc.providers.gateways import GatewaysProvider
 from backend.infrastructure.ioc.providers.redis import RedisProvider
@@ -18,4 +18,5 @@ def get_container() -> AsyncContainer:
         UsecasesProvider(),
         AuthProvider(),
         S3Provider(),
+        FirebaseProvider(),
     )
