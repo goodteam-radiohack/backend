@@ -9,6 +9,7 @@ from backend.application.contracts.devices.device import DeviceResponse
 from backend.application.contracts.devices.register import RegisterDeviceRequest
 from backend.application.gateways.device import DeviceReader, DeviceWriter
 from backend.domain.dto.device import CreateDeviceDTO
+from backend.infrastructure.errors.gateways.device import DeviceNotFoundError
 
 
 @dataclass
@@ -28,7 +29,7 @@ class RegisterDeviceUseCase(Interactor[RegisterDeviceRequest, DeviceResponse]):
                 user.id, data.token
             )
             return DeviceResponse.from_entity(existing_device)
-        except NoResultFound:
+        except DeviceNotFoundError:
             pass
 
         async with self.uow:
