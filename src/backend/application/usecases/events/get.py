@@ -16,6 +16,7 @@ from backend.application.contracts.events.get import (
 from backend.application.errors.access import UnauthorizedError
 from backend.application.gateways.event import EventReader
 from backend.application.gateways.rsvp import RsvpReader
+from backend.domain.enum.event import EventVisibility
 from backend.domain.enum.user import UserRole
 from backend.domain.services.s3 import S3Service
 from backend.infrastructure.errors.gateways.rsvp import RsvpNotFoundError
@@ -39,8 +40,10 @@ class GetEventUseCase(Interactor[GetEventRequest, EventResponse]):
         event = await self.event_reader.with_id(data.id)
 
         look_for = user.helping_to_id or user.id
-        if user.role != UserRole.ADMIN and (
-            not event.event_for or event.event_for.id != look_for
+        if (
+            event.visibility != EventVisibility.PUBLIC
+            and user.role != UserRole.ADMIN
+            and (not event.event_for or event.event_for.id != look_for)
         ):
             raise UnauthorizedError
 
