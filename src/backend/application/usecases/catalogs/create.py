@@ -23,7 +23,9 @@ class CreateCatalogUseCase(Interactor[CreateCatalogRequest, CatalogResponse]):
 
         if data.parent_id is not None:
             # TODO: replace with `exists` query
-            await self.catalog_reader.with_id(data.parent_id)
+            await self.catalog_reader.with_id(
+                data.parent_id, user.helping_to_id or user.id
+            )
 
         user_id = user.helping_to_id or user.id
 
