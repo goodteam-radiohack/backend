@@ -43,7 +43,7 @@ services:
     image: depute-backend:latest
     restart: unless-stopped
 
-    command: python -m taskiq workers --workers 1 backend.presentation.queues:broker backend.presentation.queues.task
+    command: python -m taskiq worker --workers 1 backend.presentation.queues:broker backend.presentation.queues.task
 
     environment: *shared-env
 
