@@ -68,7 +68,7 @@ services:
         condition: service_started
 
   migrations:
-    image: urfu-entrants:latest
+    image: depute-backend:latest
     restart: no
 
     command: python -m alembic upgrade head
