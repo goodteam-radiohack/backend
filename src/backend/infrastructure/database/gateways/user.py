@@ -63,7 +63,7 @@ class UserGateway(UserReader, UserWriter, UserUpdater):
                 username=dto.username,
                 password=dto.hashed_password,
                 role=dto.role,
-                helping_for_id=dto.helping_for_id,
+                helping_to_id=dto.helping_for_id,
                 avatar_url=dto.avatar_url,
                 name=dto.name,
             )
