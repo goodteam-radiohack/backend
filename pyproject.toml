@@ -24,6 +24,9 @@ dependencies = [
     "async-firebase>=4.0.0",
     "taskiq>=0.11.18",
     "taskiq-nats>=0.5.1",
+    "pytest>=8.4.2",
+    "pytest-asyncio>=1.2.0",
+    "testcontainers>=4.13.2",
 ]
 
 [tool.ruff]
@@ -81,4 +84,8 @@ install_types = true
 ignore_missing_imports = true
 warn_unused_ignores = false
 disallow_subclassing_any = false
+exclude = ['tests']
 plugins = ['pydantic.mypy', 'sqlalchemy.ext.mypy.plugin']
+
+[tool.pytest.ini_options]
+asyncio_default_fixture_loop_scope = "session"
