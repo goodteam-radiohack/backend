@@ -16,7 +16,7 @@ from backend.application.usecases.events.attach_document import (
     UnAttachDocumentUseCase,
 )
 from backend.application.usecases.events.create import CreateEventUseCase
-from backend.application.usecases.events.get import GetEventsUseCase
+from backend.application.usecases.events.get import GetEventsUseCase, GetEventUseCase
 from backend.application.usecases.events.update import UpdateEventUseCase
 from backend.application.usecases.rsvp.set_status import SetRsvpStatusUseCase
 from backend.application.usecases.users.create import CreateUserUseCase
@@ -39,6 +39,7 @@ class UsecasesProvider(Provider):
 
     # events
     get_events = provide(GetEventsUseCase)
+    get_event = provide(GetEventUseCase)
     create_event = provide(CreateEventUseCase)
     update_event = provide(UpdateEventUseCase)
 

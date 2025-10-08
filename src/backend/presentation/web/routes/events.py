@@ -14,7 +14,11 @@ from backend.application.contracts.events.create import (
     UpdateEventRequest,
 )
 from backend.application.contracts.events.event import EventResponse
-from backend.application.contracts.events.get import GetEventsRequest, GetEventsResponse
+from backend.application.contracts.events.get import (
+    GetEventRequest,
+    GetEventsRequest,
+    GetEventsResponse,
+)
 from backend.application.contracts.rsvp.set_status import (
     SetRsvpStatusRequest,
     SetRsvpStatusResponse,
@@ -24,7 +28,7 @@ from backend.application.usecases.events.attach_document import (
     UnAttachDocumentUseCase,
 )
 from backend.application.usecases.events.create import CreateEventUseCase
-from backend.application.usecases.events.get import GetEventsUseCase
+from backend.application.usecases.events.get import GetEventsUseCase, GetEventUseCase
 from backend.application.usecases.events.update import UpdateEventUseCase
 from backend.application.usecases.rsvp.set_status import SetRsvpStatusUseCase
 from backend.presentation.web.dependencies.authorization import authorization_header
@@ -52,6 +56,13 @@ async def create_event(
     req: CreateEventRequest, interactor: FromDishka[CreateEventUseCase]
 ) -> EventResponse:
     return await interactor(req)
+
+
+@router.get("/{event_id}")
+async def get_event(
+    interactor: FromDishka[GetEventUseCase], event_id: int
+) -> EventResponse:
+    return await interactor(GetEventRequest(id=event_id))
 
 
 @router.patch("/{event_id}")

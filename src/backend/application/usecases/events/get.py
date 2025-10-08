@@ -7,13 +7,49 @@ from pytz import timezone
 from backend.application.common.id_provider import IdProvider
 from backend.application.common.interactor import Interactor
 from backend.application.contracts.events.event import EventResponse
-from backend.application.contracts.events.get import GetEventsRequest, GetEventsResponse
+from backend.application.contracts.events.get import (
+    GetEventRequest,
+    GetEventsRequest,
+    GetEventsResponse,
+)
+from backend.application.errors.access import UnauthorizedError
 from backend.application.gateways.event import EventReader
 from backend.application.gateways.rsvp import RsvpReader
+from backend.domain.enum.user import UserRole
 from backend.domain.services.s3 import S3Service
 
 TZ = timezone("Asia/Yekaterinburg")
 EXPIRES_IN = timedelta(hours=3)
+
+
+@dataclass
+class GetEventUseCase(Interactor[GetEventRequest, EventResponse]):
+    id_provider: IdProvider
+
+    s3_service: S3Service
+
+    rsvp_reader: RsvpReader
+    event_reader: EventReader
+
+    async def __call__(self, data: GetEventRequest) -> EventResponse:
+        user = await self.id_provider.get_user()
+
+        event = await self.event_reader.with_id(data.id)
+
+        look_for = user.helping_to_id or user.id
+        if user.role != UserRole.ADMIN and (
+            not event.event_for or event.event_for.id != look_for
+        ):
+            raise UnauthorizedError
+
+        rsvp = await self.rsvp_reader.with_user_and_event(user.id, event.id)
+        document_url = (
+            await self.s3_service.get_url(rsvp.reason_document.storage_key, EXPIRES_IN)
+            if rsvp and rsvp.reason_document
+            else None
+        )
+
+        return EventResponse.from_entity(event, rsvp, document_url)
 
 
 @dataclass

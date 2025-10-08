@@ -6,6 +6,10 @@ from pydantic import BaseModel
 from backend.application.contracts.events.event import EventResponse
 
 
+class GetEventRequest(BaseModel):
+    id: int
+
+
 class GetEventsRequest(BaseModel):
     period: Literal["week"]
     offset: int
