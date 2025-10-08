@@ -33,7 +33,7 @@ class SendNotificationsUseCase(Interactor[SendNotificationRequest, None]):
 
     uow: UnitOfWork
 
-    async def __call__(self, data: SendNotificationRequest) -> None:
+    async def __call__(self, _: SendNotificationRequest) -> None:
         events = await self.event_reader.starting_soon()
         now = datetime.now(tz=timezone("UTC"))
         async with self.uow:

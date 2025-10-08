@@ -14,6 +14,9 @@ class UserModel(BaseModel):
 
     id: Mapped[int] = mapped_column(primary_key=True)
 
+    avatar_url: Mapped[str | None] = mapped_column(nullable=True)
+    name: Mapped[str | None] = mapped_column(nullable=True)
+
     username: Mapped[str] = mapped_column(unique=True, index=True)
     password: Mapped[str] = mapped_column()
 

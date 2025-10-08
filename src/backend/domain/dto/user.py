@@ -9,3 +9,6 @@ class CreateUserDTO(BaseModel):
 
     role: UserRole = UserRole.DEPUTE
     helping_for_id: int | None
+
+    avatar_url: str | None
+    name: str | None

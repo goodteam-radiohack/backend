@@ -5,6 +5,9 @@ from backend.domain.enum.user import UserRole
 class OmittedUserEntity(BaseEntity):
     id: int
 
+    avatar_url: str | None
+    name: str | None
+
     username: str
     password: str
 

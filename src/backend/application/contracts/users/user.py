@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from backend.domain.entities.user import UserEntity
+from backend.domain.entities.user import OmittedUserEntity, UserEntity
 from backend.domain.enum.user import UserRole
 
 
@@ -9,12 +9,17 @@ class OmittedUserResponse(BaseModel):
     username: str
     role: UserRole
 
+    avatar_url: str | None
+    name: str | None
+
     @classmethod
-    def from_entity(cls, entity: UserEntity) -> "OmittedUserResponse":
+    def from_entity(cls, entity: OmittedUserEntity) -> "OmittedUserResponse":
         return OmittedUserResponse(
             id=entity.id,
             username=entity.username,
             role=entity.role,
+            avatar_url=entity.avatar_url,
+            name=entity.name,
         )
 
 
@@ -25,6 +30,9 @@ class UserResponse(BaseModel):
 
     helping_to: OmittedUserResponse | None
     helper: OmittedUserResponse | None
+
+    avatar_url: str | None
+    name: str | None
 
     @classmethod
     def from_entity(cls, entity: UserEntity) -> "UserResponse":
@@ -38,4 +46,6 @@ class UserResponse(BaseModel):
             helper=OmittedUserResponse.from_entity(entity.helper)
             if entity.helper
             else None,
+            avatar_url=entity.avatar_url,
+            name=entity.name,
         )
