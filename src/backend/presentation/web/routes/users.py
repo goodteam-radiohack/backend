@@ -4,10 +4,13 @@ from dishka import FromDishka
 from dishka.integrations.fastapi import DishkaRoute
 from fastapi import APIRouter, Depends, Query
 
+from backend.application.contracts.devices.device import DeviceResponse
+from backend.application.contracts.devices.register import RegisterDeviceRequest
 from backend.application.contracts.users.create import CreateUserRequest
 from backend.application.contracts.users.get import GetUsersRequest, GetUsersResponse
 from backend.application.contracts.users.me import GetMeRequest, GetMeResponse
 from backend.application.contracts.users.user import UserResponse
+from backend.application.usecases.devices.register import RegisterDeviceUseCase
 from backend.application.usecases.users.create import CreateUserUseCase
 from backend.application.usecases.users.get import GetUsersUseCase
 from backend.application.usecases.users.me import GetMeUseCase
@@ -24,6 +27,13 @@ router = APIRouter(
 @router.get("/me")
 async def get_me(interactor: FromDishka[GetMeUseCase]) -> GetMeResponse:
     return await interactor(GetMeRequest())
+
+
+@router.post("/me/devices")
+async def register_device(
+    req: RegisterDeviceRequest, interactor: FromDishka[RegisterDeviceUseCase]
+) -> DeviceResponse:
+    return await interactor(req)
 
 
 @router.get("")

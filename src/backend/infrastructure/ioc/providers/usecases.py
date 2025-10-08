@@ -7,6 +7,7 @@ from backend.application.usecases.catalogs.create import CreateCatalogUseCase
 from backend.application.usecases.catalogs.delete import DeleteCatalogUseCase
 from backend.application.usecases.catalogs.get import GetCatalogUseCase
 from backend.application.usecases.catalogs.get_root import GetRootCatalogsUseCase
+from backend.application.usecases.devices.register import RegisterDeviceUseCase
 from backend.application.usecases.documents.create import CreateDocumentUseCase
 from backend.application.usecases.documents.delete import DeleteDocumentUseCase
 from backend.application.usecases.documents.get import GetDocumentUseCase
@@ -61,5 +62,8 @@ class UsecasesProvider(Provider):
     # attach
     attach_document = provide(AttachDocumentUseCase)
     unattach_document = provide(UnAttachDocumentUseCase)
+
+    # devices
+    register_device = provide(RegisterDeviceUseCase)
 
     uow = provide(UnitOfWorkImpl, provides=UnitOfWork)
